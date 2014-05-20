@@ -6,7 +6,10 @@
 
 package com.paternizer.servlet;
 
+import com.paternizer.service.PublishFileOnFTP;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -41,10 +44,10 @@ public class GenerateFile extends HttpServlet {
         String template = null;
         try {
             try {
-                URL templateURL = new URL(request.getParameter("fileName"));
+                URL templateURL = new URL(request.getParameter("fileURL"));
                 template = getFile(templateURL);
             } catch (MalformedURLException e) {
-                System.err.println(" Unknow URL : " + request.getParameter("fileName") + ".");
+                System.err.println(" Unknow URL : " + request.getParameter("fileURL") + ".");
             } catch (IOException e) {
                 System.err.println(e);
             }
@@ -62,6 +65,14 @@ public class GenerateFile extends HttpServlet {
                 }
 
                 out.println(template);
+
+                File file = new File(request.getParameter("fileName"));
+                FileOutputStream fileOutputStream = new FileOutputStream(file);
+                fileOutputStream.write(template.getBytes());
+                fileOutputStream.close();
+
+                PublishFileOnFTP publishFileOnFTP = new PublishFileOnFTP();
+                publishFileOnFTP.publishFile(file);
             }
         } finally {
             out.close();
