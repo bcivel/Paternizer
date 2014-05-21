@@ -6,14 +6,10 @@
 
 package com.paternizer.servlet;
 
-import com.paternizer.service.TemplateService;
+import com.paternizer.service.PublishFileOnFTP;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -23,7 +19,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author memiks
  */
-public class GenerateFile extends HttpServlet {
+public class PublishOnFtp extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -38,38 +34,14 @@ public class GenerateFile extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
-        String template = null;
         try {
-            try {
-                URL templateURL = new URL(request.getParameter("fileURL"));
-                TemplateService templateService = new TemplateService();
-                template = templateService.getFile(templateURL);
-            } catch (MalformedURLException e) {
-                System.err.println(" Unknow URL : " + request.getParameter("fileURL") + ".");
-            } catch (IOException e) {
-                System.err.println(e);
-            }
-
-            if (template != null) {
-                Map<String, String[]> parametersName = request.getParameterMap();
-
-                for (Map.Entry<String, String[]> entry : parametersName.entrySet()) {
-                    String parameter = entry.getKey();
-                    String[] values = entry.getValue();
-
-                    System.err.println(" PARAMETER : " + parameter + " VALUE : " + values[0]);
-
-                    template = template.replaceAll("#" + parameter + "#", values[0]);
-                }
-
+            if (request.getParameter("fileName") != null) {
                 File file = new File("d://PaternizerDocuments/temp/" + request.getParameter("fileName"));
                 System.err.println(" FILE : " + file.getAbsolutePath() + "/" + file.getName());
 
-                FileOutputStream fileOutputStream = new FileOutputStream(file);
-                fileOutputStream.write(template.getBytes());
-                fileOutputStream.close();
+                PublishFileOnFTP publishFileOnFTP = new PublishFileOnFTP();
+                publishFileOnFTP.publishFile(file);
 
-                out.println(request.getParameter("fileName"));
             }
         } finally {
             out.close();
