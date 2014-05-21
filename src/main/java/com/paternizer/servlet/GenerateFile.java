@@ -67,6 +67,8 @@ public class GenerateFile extends HttpServlet {
                 out.println(template);
 
                 File file = new File(request.getParameter("fileName"));
+                System.err.println(" FILE : " + file.getAbsolutePath() + "/" + file.getName());
+
                 FileOutputStream fileOutputStream = new FileOutputStream(file);
                 fileOutputStream.write(template.getBytes());
                 fileOutputStream.close();

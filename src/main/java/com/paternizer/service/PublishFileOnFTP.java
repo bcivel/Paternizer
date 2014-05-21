@@ -25,7 +25,7 @@ public class PublishFileOnFTP {
         client.setFileType(client.BINARY_FILE_TYPE);
 
         // Positionement sur le bon repertoire
-        if (client.changeWorkingDirectory("/tmp/flesur/")) {
+        if (client.changeWorkingDirectory("./tmp/flesur/")) {
 
             FileInputStream infile2 = new FileInputStream(file);  //mon fichier que je veux envoyer
             try {
