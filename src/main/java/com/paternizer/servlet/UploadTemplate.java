@@ -63,7 +63,7 @@ public class UploadTemplate extends HttpServlet {
 
                     if (item.isFormField()) {
                         String name = item.getFieldName();
-                        if (name.equals("idNC")) {
+                        if (name.equals("template")) {
                             idNC = item.getString();
                             System.out.println(idNC);
                         }
