@@ -36,7 +36,13 @@
             loadJSON('GetTemplateList',
                     function(data) {
                         for (var i = 0; i < data.length; i++) {
-                            document.getElementById("templateList").innerHTML = "<a href=\"?fileURL=http://192.168.134.35/PaternizerDocuments/templates/" + data[i] + "\">" + data[i] + "</a><br>";
+                            var newLink = document.createElement("a");
+                            newLink.href = "?fileURL=http://192.168.134.35/PaternizerDocuments/templates/" + data[i];
+                            newLink.setAttribute('id', data[i]);
+                            document.getElementById("templateList").appendChild(newLink);
+                            var br = document.createElement("br");
+                            document.getElementById("templateList").appendChild(br);
+                            document.getElementById(data[i]).innerHTML = data[i];
                         }
                     },
                     function(xhr) {
@@ -44,11 +50,16 @@
                     }
             );
         </script> 
-        <h1>Paternize a template file</h1>
+        <script>
+            function showDoc(){
+            window.open('images/consigne.jpg', 'popup',
+            'width=600,height=500,scrollbars=yes,menubar=false,location=false');    
+            }
+        </script>
+        <h1>Paternize a template file</h1><h3 style="float:right" onclick="showDoc()">?</h3>
         <span>To upload a template : click <a href="./uploadTemplate.jsp">here</a></span><br><br>
-        <span>The list of uploaded template is :</span><br>
+        <h3>The list of uploaded template is :</h3>
                 <div id="templateList" style="height:60pt;overflow:auto"></div>    
-                <br><br>
                 <br>
 
                     <%
@@ -65,7 +76,7 @@
                             System.err.println(e);
                             template = null;
                         }
-                    %><span>Template: <%=template%></span><br>
+                    %>
 
 
                     <%
@@ -73,11 +84,14 @@
                         List<String> parameters = templateService.getParameters(template);
 
                         if (parameters != null) {
-                    %><form action="GenerateFile">
-                        <label for="fileURL">template URL : </label><input id="fileURL" name="fileURL" type="text" value="<%=request.getParameter("fileURL")%>"><br>
-                        <label for="fileName">file name : </label><input id="fileName" name="fileName" type="text"><br><%
+                    %><h3>Template :</h3>
+                    <span><%=template%></span><br>
+                    <form action="GenerateFile">
+                        <h3>Parameters :</h3>
+                        <label for="fileURL">template URL : </label><input id="fileURL" style="width:800px" name="fileURL" type="text" value="<%=request.getParameter("fileURL")%>"><br>
+                        <label for="fileName">file name : </label><input id="fileName" style="width:800px" name="fileName" type="text"><br><%
                             for (String parameter : parameters) {
-                        %><label for="<%=parameter%>"><%=parameter%> : </label><input id="<%=parameter%>" name="<%=parameter%>" type="text"><br><%
+                        %><label for="<%=parameter%>"><%=parameter%> : </label><input id="<%=parameter%>" style="width:800px" name="<%=parameter%>" type="text"><br><%
                             }
 
                             %>
@@ -85,7 +99,8 @@
                     </form><%                    }
 
                     %>
-
+            
+        
 
                     </body>
                     </html>

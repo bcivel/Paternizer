@@ -69,7 +69,7 @@ public class GenerateFile extends HttpServlet {
                 fileOutputStream.write(template.getBytes());
                 fileOutputStream.close();
 
-                out.println(request.getParameter("fileName"));
+                out.println("http://192.168.134.35/PaternizerDocuments/temp/" + request.getParameter("fileName")+".flux");
             }
         } finally {
             out.close();
