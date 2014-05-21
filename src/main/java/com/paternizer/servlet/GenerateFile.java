@@ -7,15 +7,13 @@
 package com.paternizer.servlet;
 
 import com.paternizer.service.PublishFileOnFTP;
-import java.io.BufferedReader;
+import com.paternizer.service.TemplateService;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -45,7 +43,8 @@ public class GenerateFile extends HttpServlet {
         try {
             try {
                 URL templateURL = new URL(request.getParameter("fileURL"));
-                template = getFile(templateURL);
+                TemplateService templateService = new TemplateService();
+                template = templateService.getFile(templateURL);
             } catch (MalformedURLException e) {
                 System.err.println(" Unknow URL : " + request.getParameter("fileURL") + ".");
             } catch (IOException e) {
@@ -79,28 +78,6 @@ public class GenerateFile extends HttpServlet {
         } finally {
             out.close();
         }
-    }
-
-    public String getFile(URL u) throws IOException {
-        URLConnection uc = u.openConnection();
-        int FileLenght = uc.getContentLength();
-        if (FileLenght == -1) {
-            throw new IOException("Unable to read file.");
-        }
-
-        BufferedReader bufferedReader;
-        bufferedReader = new BufferedReader(new InputStreamReader(uc.getInputStream()));
-
-        String line;
-        StringBuilder template = new StringBuilder();
-        while ((line = bufferedReader.readLine()) != null) {
-            if (line.length() == 0) {
-                break;
-            }
-            template.append(line);
-        }
-
-        return template.toString();
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
