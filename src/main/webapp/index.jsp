@@ -28,13 +28,20 @@
                 System.err.println(e);
                 template = null;
             }
-            
+            %><span>Template: <%=template%></span><br><%
             List<String> parameters = templateService.getParameters(template);
             
             if(parameters != null) {
+                %><form action="GenerateFile">
+                    <label for="fileURL">template URL : </label><input id="fileURL" name="fileURL" type="text" value="<%=request.getParameter("fileURL")%>"><br>
+                    <label for="fileName">file name : </label><input id="fileName" name="fileName" type="text"><br><%
                 for(String parameter: parameters) {
-                    %><span>PARAMETER Template: <%=parameter%></span><br><%
+                    %><label for="<%=parameter%>"><%=parameter%> : </label><input id="<%=parameter%>" name="<%=parameter%>" type="text"><br><%
                 }
+                
+                %>
+                <button id="submit" type="submit">Generate</button>
+                </form><%
             }
             
         %>

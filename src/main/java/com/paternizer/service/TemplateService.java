@@ -21,8 +21,8 @@ import java.util.regex.Pattern;
  * @author memiks
  */
 public class TemplateService {
-    private static Pattern pattern;
-    private static Matcher matcher;
+    private Pattern pattern;
+    private Matcher matcher;
 
     public String getFile(URL u) throws IOException {
         URLConnection uc = u.openConnection();
@@ -50,16 +50,13 @@ public class TemplateService {
         List<String> parameters;
         if (template != null) {
             parameters = new ArrayList<String>();
-            pattern = Pattern.compile("#(.*)#");
+
+            pattern = Pattern.compile("#([a-zA-z_-]*)#");
             matcher = pattern.matcher(template);
-            // lancement de la recherche de toutes les occurrences
-            // si recherche fructueuse
-            if (matcher.matches()) {
-                // pour chaque groupe
-                for (int i = 0; i <= matcher.groupCount(); i++) {
-                    // affichage de la sous-chaîne capturée
-                    parameters.add(matcher.group(i));
-                }
+            while (matcher.find()) {
+                //parameters.add("Found this patern : " + matcher.group());
+                parameters.add(matcher.group(1));
+                System.out.println();
             }
 
             if (parameters.size() > 0) {
