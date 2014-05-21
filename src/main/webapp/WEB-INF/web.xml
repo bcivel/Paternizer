@@ -8,9 +8,17 @@
             <param-value/>
         </init-param>
     </servlet>
+    <servlet>
+        <servlet-name>UploadTemplate</servlet-name>
+        <servlet-class>com.paternizer.servlet.UploadTemplate</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>GenerateFile</servlet-name>
         <url-pattern>/GenerateFile</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UploadTemplate</servlet-name>
+        <url-pattern>/UploadTemplate</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
