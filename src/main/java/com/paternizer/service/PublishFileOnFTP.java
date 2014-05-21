@@ -19,7 +19,7 @@ public class PublishFileOnFTP {
 
     public boolean publishFile(File file) throws IOException {
         FTPClient client = new FTPClient();
-        client.connect("kwai", 21);
+        client.connect("192.168.4.15", 21);
         client.login("tempo2", "kFjvBMYC");
 
         client.setFileType(client.BINARY_FILE_TYPE);
