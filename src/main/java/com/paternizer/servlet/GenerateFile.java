@@ -65,7 +65,7 @@ public class GenerateFile extends HttpServlet {
 
                 out.println(template);
 
-                File file = new File(request.getParameter("fileName"));
+                File file = new File("d://PaternizerDocuments/" + request.getParameter("fileName"));
                 System.err.println(" FILE : " + file.getAbsolutePath() + "/" + file.getName());
 
                 FileOutputStream fileOutputStream = new FileOutputStream(file);
