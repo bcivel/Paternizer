@@ -16,6 +16,10 @@
         <servlet-name>PublishOnFtp</servlet-name>
         <servlet-class>com.paternizer.servlet.PublishOnFtp</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>GetTemplateList</servlet-name>
+        <servlet-class>com.paternizer.servlet.GetTemplateList</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>GenerateFile</servlet-name>
         <url-pattern>/GenerateFile</url-pattern>
@@ -27,6 +31,10 @@
     <servlet-mapping>
         <servlet-name>PublishOnFtp</servlet-name>
         <url-pattern>/PublishOnFtp</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>GetTemplateList</servlet-name>
+        <url-pattern>/GetTemplateList</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
