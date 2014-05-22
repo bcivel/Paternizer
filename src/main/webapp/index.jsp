@@ -59,48 +59,51 @@
         <h1>Paternize a template file</h1><h3 style="float:right" onclick="showDoc()">?</h3>
         <span>To upload a template : click <a href="./uploadTemplate.jsp">here</a></span><br><br>
         <h3>The list of uploaded template is :</h3>
-                <div id="templateList" style="height:60pt;overflow:auto"></div>    
-                <br>
+        <%
+                 String template;
+                 TemplateService templateService = new TemplateService();
+                 try {
+                     URL templateURL = new URL(request.getParameter("fileURL"));
+                     template = templateService.getFile(templateURL);
+                 } catch (MalformedURLException e) {
+                     System.err.println(" Unknow URL : " + request.getParameter("fileURL") + ".");
+                     template = null;
+                 } catch (IOException e) {
+                     System.err.println(e);
+                     template = null;
+                 }
+                 List<String> parameters = templateService.getParameters(template);
 
-                    <%
+                 String style;
+                 if (parameters != null) {
+                     style = "style=\"height:60pt;overflow:auto\"";
+                 } else {
+                     style = "";
+                 }
+         %>
+        <div id="templateList" <%=style%>></div>    
+        <br>
+<%
+            if (parameters != null) {
+%>
+                <h3>Template :</h3>
+                <span><%=template%></span><br>
+                <form action="GenerateFile">
+                    <h3>Parameters :</h3>
+                    <label for="fileURL">template URL : </label><input id="fileURL" style="width:800px" name="fileURL" type="text" value="<%=request.getParameter("fileURL")%>"><br>
+                    <label for="fileName">file name : </label><input id="fileName" style="width:800px" name="fileName" type="text"><br>
+<%
+                    for (String parameter : parameters) {
+%>
+                        <label for="<%=parameter%>"><%=parameter%> : </label><input id="<%=parameter%>" style="width:800px" name="<%=parameter%>" type="text"><br>
+<%
+                    }
+%>
+                    <button id="submit" type="submit">Generate</button>
+                </form>
+<%
+            }
 
-                        String template;
-                        TemplateService templateService = new TemplateService();
-                        try {
-                            URL templateURL = new URL(request.getParameter("fileURL"));
-                            template = templateService.getFile(templateURL);
-                        } catch (MalformedURLException e) {
-                            System.err.println(" Unknow URL : " + request.getParameter("fileURL") + ".");
-                            template = null;
-                        } catch (IOException e) {
-                            System.err.println(e);
-                            template = null;
-                        }
-                    %>
-
-
-                    <%
-
-                        List<String> parameters = templateService.getParameters(template);
-
-                        if (parameters != null) {
-                    %><h3>Template :</h3>
-                    <span><%=template%></span><br>
-                    <form action="GenerateFile">
-                        <h3>Parameters :</h3>
-                        <label for="fileURL">template URL : </label><input id="fileURL" style="width:800px" name="fileURL" type="text" value="<%=request.getParameter("fileURL")%>"><br>
-                        <label for="fileName">file name : </label><input id="fileName" style="width:800px" name="fileName" type="text"><br><%
-                            for (String parameter : parameters) {
-                        %><label for="<%=parameter%>"><%=parameter%> : </label><input id="<%=parameter%>" style="width:800px" name="<%=parameter%>" type="text"><br><%
-                            }
-
-                            %>
-                        <button id="submit" type="submit">Generate</button>
-                    </form><%                    }
-
-                    %>
-            
-        
-
-                    </body>
-                    </html>
+%>
+    </body>
+</html>

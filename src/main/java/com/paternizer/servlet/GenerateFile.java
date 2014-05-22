@@ -61,15 +61,21 @@ public class GenerateFile extends HttpServlet {
 
                     template = template.replaceAll("#" + parameter + "#", values[0]);
                 }
-//TODO Send extension in parameter
-                File file = new File("d:\\PaternizerDocuments\\temp\\" + request.getParameter("fileName"));
-                System.err.println(" FILE : " + file.getAbsolutePath());
 
-                FileOutputStream fileOutputStream = new FileOutputStream(file);
-                fileOutputStream.write(template.getBytes());
-                fileOutputStream.close();
+                // if no file name just display file instead of create in in PaternizerDocuments
+                if (request.getParameter("fileName") != null && !"".equals(request.getParameter("fileName").trim())) {
+                    //TODO Send extension in parameter
+                    File file = new File("d:\\PaternizerDocuments\\temp\\" + request.getParameter("fileName"));
+                    System.err.println(" FILE : " + file.getAbsolutePath());
 
-                out.println("http://192.168.134.35/PaternizerDocuments/temp/" + request.getParameter("fileName"));
+                    FileOutputStream fileOutputStream = new FileOutputStream(file);
+                    fileOutputStream.write(template.getBytes());
+                    fileOutputStream.close();
+
+                    out.println("http://192.168.134.35/PaternizerDocuments/temp/" + request.getParameter("fileName"));
+                } else {
+                    out.println(template);
+                }
             }
         } finally {
             out.close();

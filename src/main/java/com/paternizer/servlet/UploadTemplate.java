@@ -97,7 +97,9 @@ public class UploadTemplate extends HttpServlet {
 
                     }
                 }
+                out.println("File uploaded.");
             } catch (FileUploadException ex) {
+                out.println("An error occured File is not uploaded.");
                 Logger.getLogger(UploadTemplate.class.getName()).log(Level.SEVERE, null, ex);
             } finally {
                 out.close();
