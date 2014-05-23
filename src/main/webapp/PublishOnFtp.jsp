@@ -18,6 +18,11 @@
             loadJSON('GetList',"&type=temp",
                     function(data) {
                         for (var i = 0; i < data.length; i++) {
+                            var newInput = document.createElement("input");
+                            newInput.setAttribute('type','checkbox');
+                            newInput.setAttribute('value',data[i]);
+                            newInput.setAttribute('id','checkbox_'+data[i]);
+                            document.getElementById("generatedList").appendChild(newInput);
                             var newLink = document.createElement("a");
                             newLink.href = "?fileURL=http://192.168.134.35/PaternizerDocuments/temp/" + data[i];
                             newLink.setAttribute('id', data[i]);
