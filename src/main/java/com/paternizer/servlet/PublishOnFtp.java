@@ -10,6 +10,8 @@ import com.paternizer.service.PublishFileOnFTP;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -35,21 +37,37 @@ public class PublishOnFtp extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
 
+        String host = request.getParameter("host");
+        String port = request.getParameter("port");
+        String user = request.getParameter("user");
+        String password = request.getParameter("password");
+        String folder = request.getParameter("folder");
+
         if (request.getParameterValues("fileName") != null) {
             String[] fileNames = request.getParameterValues("fileName");
+            List<File> fileList = new ArrayList<File>();
             for (int i = 0; i < fileNames.length; i++) {
                 try {
                     String fileName = fileNames[i];
                     File file = new File("d://PaternizerDocuments/temp/" + fileName);
 //                    System.err.println(" FILE : " + file.getAbsolutePath() + "/" + file.getName());
 
-                    PublishFileOnFTP publishFileOnFTP = new PublishFileOnFTP();
-                    publishFileOnFTP.publishFile(file);
-                    out.println(" FILE : " + file.getName() + " Uploaded<br>");
+                    fileList.add(file);
                 } finally {
                     out.close();
                 }
 
+            }
+            try {
+                PublishFileOnFTP publishFileOnFTP = new PublishFileOnFTP();
+                publishFileOnFTP.publishFile(host, port, user, password, folder, fileList);
+
+                for (File file : fileList) {
+                    out.println(" FILE : " + file.getName() + " Uploaded<br>");
+
+                }
+            } finally {
+                out.close();
             }
         }
     }

@@ -45,14 +45,18 @@
             <br>
             <label for="host">FTP Host</label>
             <input type="text" id="host"/>
+            &nbsp;
             <label for="port">Port</label>
             <input type="text" id="port"/>
             <br>
             <label for="user">User</label>
             <input type="text" id="user"/>
-            <br>
+            &nbsp;
             <label for="password">Password</label>
             <input type="password" id="password"/>
+            <br>
+            <label for="foler">Folder</label>
+            <input type="text" id="folder"/>
             <br>
             <button type="submit">Upload</button>
         </form>
