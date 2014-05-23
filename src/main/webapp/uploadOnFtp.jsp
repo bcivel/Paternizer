@@ -21,7 +21,8 @@
                             var newInput = document.createElement("input");
                             newInput.setAttribute('type','checkbox');
                             newInput.setAttribute('value',data[i]);
-                            newInput.setAttribute('id','fileName');
+                            newInput.setAttribute('name','fileName');
+                            newInput.setAttribute('id','file_'+data[i]);
                             document.getElementById("generatedList").appendChild(newInput);
                             var newLink = document.createElement("a");
                             newLink.href = "?fileURL=http://192.168.134.35/PaternizerDocuments/temp/" + data[i];
@@ -44,19 +45,19 @@
             <div id="generatedList"></div>
             <br>
             <label for="host">FTP Host</label>
-            <input type="text" id="host"/>
+            <input type="text" id="host" name="host"/>
             &nbsp;
             <label for="port">Port</label>
-            <input type="text" id="port"/>
+            <input type="text" id="port" name="port"/>
             <br>
             <label for="user">User</label>
-            <input type="text" id="user"/>
+            <input type="text" id="user" name="user"/>
             &nbsp;
             <label for="password">Password</label>
-            <input type="password" id="password"/>
+            <input type="password" id="password" name="password"/>
             <br>
             <label for="foler">Folder</label>
-            <input type="text" id="folder"/>
+            <input type="text" id="folder" name="folder"/>
             <br>
             <button type="submit">Upload</button>
         </form>
