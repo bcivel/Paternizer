@@ -34,17 +34,23 @@ public class PublishOnFtp extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
-        try {
-            if (request.getParameter("fileName") != null) {
-                File file = new File("d://PaternizerDocuments/temp/" + request.getParameter("fileName"));
-                System.err.println(" FILE : " + file.getAbsolutePath() + "/" + file.getName());
 
-                PublishFileOnFTP publishFileOnFTP = new PublishFileOnFTP();
-                publishFileOnFTP.publishFile(file);
+        if (request.getParameterValues("fileName") != null) {
+            String[] fileNames = request.getParameterValues("fileName");
+            for (int i = 0; i < fileNames.length; i++) {
+                try {
+                    String fileName = fileNames[i];
+                    File file = new File("d://PaternizerDocuments/temp/" + fileName);
+//                    System.err.println(" FILE : " + file.getAbsolutePath() + "/" + file.getName());
+
+                    PublishFileOnFTP publishFileOnFTP = new PublishFileOnFTP();
+                    publishFileOnFTP.publishFile(file);
+                    out.println(" FILE : " + file.getName() + " Uploaded<br>");
+                } finally {
+                    out.close();
+                }
 
             }
-        } finally {
-            out.close();
         }
     }
 
