@@ -40,6 +40,7 @@
         </script> 
         <h1>Paternize a template file</h1><h3 style="float:right" onclick="showDoc()">?</h3>
         <span>To upload a template : click <a href="./uploadTemplate.jsp">here</a></span><br><br>
+        <span>To paternize a template : click <a href="./index.jsp">here</a></span><br><br>
         <h3>The list of uploaded template is :</h3>
         <form action="PublishOnFtp" method="get">
             <div id="generatedList"></div>
