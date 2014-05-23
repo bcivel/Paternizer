@@ -19,7 +19,7 @@ import org.json.JSONArray;
  *
  * @author bcivel
  */
-public class GetTemplateList extends HttpServlet {
+public class GetList extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -35,7 +35,10 @@ public class GetTemplateList extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
         try {
-            File folder = new File("D:\\PaternizerDocuments\\templates\\");
+
+            String type = request.getParameter("type");
+
+            File folder = new File("D:\\PaternizerDocuments\\" + type + "\\");
             File[] listOfFiles = folder.listFiles();
 
     JSONArray data = new JSONArray();

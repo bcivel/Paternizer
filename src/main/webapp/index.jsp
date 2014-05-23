@@ -33,7 +33,7 @@
                 xhr.send();
             }
 
-            loadJSON('GetTemplateList',
+            loadJSON('GetList',"&type=templates",
                     function(data) {
                         for (var i = 0; i < data.length; i++) {
                             var newLink = document.createElement("a");
