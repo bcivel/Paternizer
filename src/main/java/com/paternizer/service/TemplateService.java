@@ -51,7 +51,7 @@ public class TemplateService {
         if (template != null) {
             parameters = new ArrayList<String>();
 
-            pattern = Pattern.compile("#([a-zA-z_-]*)#");
+            pattern = Pattern.compile("#([0-9a-zA-z_-]*)#");
             matcher = pattern.matcher(template);
             while (matcher.find()) {
                 //parameters.add("Found this patern : " + matcher.group());
