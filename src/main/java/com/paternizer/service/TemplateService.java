@@ -11,8 +11,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -46,10 +46,10 @@ public class TemplateService {
         return template.toString();
     }
 
-    public List<String> getParameters(String template) {
-        List<String> parameters;
+    public Set<String> getParameters(String template) {
+        Set<String> parameters;
         if (template != null) {
-            parameters = new ArrayList<String>();
+            parameters = new HashSet<String>();
 
             pattern = Pattern.compile("#([0-9a-zA-z_-]*)#");
             matcher = pattern.matcher(template);
