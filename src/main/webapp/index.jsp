@@ -1,4 +1,4 @@
-<%@page import="java.util.Set"%>
+<%@page import="java.util.List"%>
 <%@page import="java.io.IOException"%>
 <%@page import="java.net.MalformedURLException"%>
 <%@page import="com.paternizer.service.TemplateService"%>
@@ -49,7 +49,7 @@
                      System.err.println(e);
                      template = null;
                  }
-                 Set<String> parameters = templateService.getParameters(template);
+                 List<String> parameters = templateService.getParameters(template);
 
                  String style;
                  if (parameters != null) {

@@ -11,7 +11,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -46,7 +49,7 @@ public class TemplateService {
         return template.toString();
     }
 
-    public Set<String> getParameters(String template) {
+    public List<String> getParameters(String template) {
         Set<String> parameters;
         if (template != null) {
             parameters = new HashSet<String>();
@@ -54,14 +57,15 @@ public class TemplateService {
             pattern = Pattern.compile("#([0-9a-zA-z_-]*)#");
             matcher = pattern.matcher(template);
             while (matcher.find()) {
-                //parameters.add("Found this patern : " + matcher.group());
                 parameters.add(matcher.group(1));
-                System.out.println();
             }
 
             if (parameters.size() > 0) {
-                return parameters;
+                List<String> sortedParameters = new ArrayList<String>(parameters);
+                Collections.sort(sortedParameters);
+                return sortedParameters;
             }
+
         }
 
         return null;
