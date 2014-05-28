@@ -6,13 +6,18 @@
 
 package com.paternizer.servlet;
 
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.SftpException;
 import com.paternizer.constants.FileConstants;
 import com.paternizer.service.PublishFileOnFTP;
+import com.paternizer.service.PublishFileOnSFTP;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -60,13 +65,21 @@ public class PublishOnFtp extends HttpServlet {
 
             }
             try {
-                PublishFileOnFTP publishFileOnFTP = new PublishFileOnFTP();
-                publishFileOnFTP.publishFile(host, port, user, password, folder, fileList);
-
+                if ("22".equals(port)) {
+                    PublishFileOnSFTP publishFileOnSFTP = new PublishFileOnSFTP();
+                    publishFileOnSFTP.publishFile(host, port, user, password, folder, fileList);
+                } else {
+                    PublishFileOnFTP publishFileOnFTP = new PublishFileOnFTP();
+                    publishFileOnFTP.publishFile(host, port, user, password, folder, fileList);
+                }
                 for (File file : fileList) {
                     out.println(" FILE : " + file.getName() + " Uploaded<br>");
 
                 }
+            } catch (JSchException ex) {
+                Logger.getLogger(PublishOnFtp.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SftpException ex) {
+                Logger.getLogger(PublishOnFtp.class.getName()).log(Level.SEVERE, null, ex);
             } finally {
                 out.close();
             }
