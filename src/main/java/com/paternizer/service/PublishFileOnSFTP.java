@@ -40,32 +40,36 @@ public class PublishFileOnSFTP {
         session.setConfig(config);
 
         session.connect();
+        if (session.isConnected()) {
+            // Initializing a channel
+            Channel channel = session.openChannel("sftp");
+            channel.connect();
 
-        // Initializing a channel
-        Channel channel = session.openChannel("sftp");
-        channel.connect();
-        ChannelSftp csftp = (ChannelSftp) channel;
+            if (channel.isConnected()) {
+                ChannelSftp csftp = (ChannelSftp) channel;
 
-        // Positionement sur le bon repertoire
-        csftp.cd(folder);
+                // Positionement sur le bon repertoire
+                csftp.cd(folder);
 
-        for (File file : files) {
-            FileInputStream infile2 = new FileInputStream(file);  //mon fichier que je veux envoyer
-            try {
-                csftp.put(infile2, file.getName());
-            } finally {
-                infile2.close();
+                for (File file : files) {
+                    FileInputStream infile2 = new FileInputStream(file);  //mon fichier que je veux envoyer
+                    try {
+                        csftp.put(infile2, file.getName());
+                    } finally {
+                        infile2.close();
+                    }
+                }
+
+                if (csftp.isConnected()) {
+                    csftp.disconnect();
+                }
+
+                if (session.isConnected()) {
+                    session.disconnect();
+                }
+                return true;
             }
         }
-
-        if (csftp.isConnected()) {
-            csftp.disconnect();
-        }
-
-        if (session.isConnected()) {
-            session.disconnect();
-        }
-
         return false;
     }
 
