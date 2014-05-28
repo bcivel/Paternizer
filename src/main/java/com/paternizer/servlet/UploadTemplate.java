@@ -6,6 +6,7 @@
 
 package com.paternizer.servlet;
 
+import com.paternizer.constants.FileConstants;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -77,13 +78,13 @@ public class UploadTemplate extends HttpServlet {
                         fileName = item.getName();
                         System.out.print(item.getSize());
 
-                        String root = "D:\\PaternizerDocuments\\templates\\";
+                        String root = FileConstants.DOCUMENT_FOLDER + "tmp" + FileConstants.FOLDER_SEPARATOR + "templates" + FileConstants.FOLDER_SEPARATOR;
                         File pathFile = new File(root + idNC);
                         if (!pathFile.exists()) {
                             pathFile.mkdirs();
                         }
 
-                        String fullPath = pathFile + "\\" + fileName;
+                        String fullPath = pathFile + FileConstants.FOLDER_SEPARATOR + fileName;
                         OutputStream outputStream = new FileOutputStream(fullPath);
                         InputStream inputStream = item.getInputStream();
 

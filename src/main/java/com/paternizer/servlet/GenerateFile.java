@@ -6,6 +6,7 @@
 
 package com.paternizer.servlet;
 
+import com.paternizer.constants.FileConstants;
 import com.paternizer.service.TemplateService;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -65,14 +66,14 @@ public class GenerateFile extends HttpServlet {
                 // if no file name just display file instead of create in in PaternizerDocuments
                 if (request.getParameter("fileName") != null && !"".equals(request.getParameter("fileName").trim())) {
                     //TODO Send extension in parameter
-                    File file = new File("d:\\PaternizerDocuments\\temp\\" + request.getParameter("fileName"));
+                    File file = new File(FileConstants.DOCUMENT_FOLDER + "temp" + FileConstants.FOLDER_SEPARATOR + request.getParameter("fileName"));
                     System.err.println(" FILE : " + file.getAbsolutePath());
 
                     FileOutputStream fileOutputStream = new FileOutputStream(file);
                     fileOutputStream.write(template.getBytes());
                     fileOutputStream.close();
 
-                    out.println("http://192.168.134.35/PaternizerDocuments/temp/" + request.getParameter("fileName"));
+                    out.println(FileConstants.DOCUMENT_URL + "temp" + FileConstants.FOLDER_SEPARATOR + request.getParameter("fileName"));
                 } else {
                     out.println(template);
                 }

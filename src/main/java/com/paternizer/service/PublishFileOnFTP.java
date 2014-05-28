@@ -26,6 +26,7 @@ public class PublishFileOnFTP {
         }
 
         client.setFileType(client.BINARY_FILE_TYPE);
+        client.setFileTransferMode(FTPClient.PASSIVE_LOCAL_DATA_CONNECTION_MODE);
 
         // Positionement sur le bon repertoire
         if (client.changeWorkingDirectory(folder)) {

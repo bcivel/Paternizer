@@ -6,6 +6,7 @@
 
 package com.paternizer.servlet;
 
+import com.paternizer.constants.FileConstants;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -38,7 +39,7 @@ public class GetList extends HttpServlet {
 
             String type = request.getParameter("type");
 
-            File folder = new File("D:\\PaternizerDocuments\\" + type + "\\");
+            File folder = new File(FileConstants.DOCUMENT_FOLDER + type + "/");
             File[] listOfFiles = folder.listFiles();
 
     JSONArray data = new JSONArray();

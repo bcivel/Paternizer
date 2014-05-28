@@ -1,3 +1,4 @@
+<%@page import="com.paternizer.constants.FileConstants"%>
 <%@page import="java.util.List"%>
 <%@page import="java.io.IOException"%>
 <%@page import="java.net.MalformedURLException"%>
@@ -19,7 +20,7 @@
                     function(data) {
                         for (var i = 0; i < data.length; i++) {
                             var newLink = document.createElement("a");
-                            newLink.href = "?fileURL=http://192.168.134.35/PaternizerDocuments/templates/" + data[i];
+                            newLink.href = "?fileURL=<%= FileConstants.DOCUMENT_URL %>templates/" + data[i];
                             newLink.setAttribute('id', data[i]);
                             document.getElementById("templateList").appendChild(newLink);
                             var br = document.createElement("br");

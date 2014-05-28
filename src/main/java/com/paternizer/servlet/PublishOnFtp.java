@@ -6,6 +6,7 @@
 
 package com.paternizer.servlet;
 
+import com.paternizer.constants.FileConstants;
 import com.paternizer.service.PublishFileOnFTP;
 import java.io.File;
 import java.io.IOException;
@@ -49,7 +50,7 @@ public class PublishOnFtp extends HttpServlet {
             for (int i = 0; i < fileNames.length; i++) {
                 try {
                     String fileName = fileNames[i];
-                    File file = new File("d://PaternizerDocuments/temp/" + fileName);
+                    File file = new File(FileConstants.DOCUMENT_FOLDER + "temp" + FileConstants.FOLDER_SEPARATOR + fileName);
 //                    System.err.println(" FILE : " + file.getAbsolutePath() + "/" + file.getName());
 
                     fileList.add(file);
