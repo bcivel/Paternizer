@@ -78,7 +78,7 @@ public class UploadTemplate extends HttpServlet {
                         fileName = item.getName();
                         System.out.print(item.getSize());
 
-                        String root = FileConstants.DOCUMENT_FOLDER + "tmp" + FileConstants.FOLDER_SEPARATOR + "templates" + FileConstants.FOLDER_SEPARATOR;
+                        String root = FileConstants.DOCUMENT_FOLDER + "templates" + FileConstants.FOLDER_SEPARATOR;
                         File pathFile = new File(root + idNC);
                         if (!pathFile.exists()) {
                             pathFile.mkdirs();
