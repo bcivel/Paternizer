@@ -51,6 +51,9 @@
             &nbsp;
             <label for="port">Port</label>
             <input type="text" id="port" name="port"/>
+            &nbsp;
+            <label for="sftp">Is SFTP ?</label>
+            <input type="checkbox" id="sftp" name="sftp"/>
             <br>
             <label for="user">User</label>
             <input type="text" id="user" name="user"/>

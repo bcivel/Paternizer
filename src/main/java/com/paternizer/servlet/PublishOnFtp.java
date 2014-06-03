@@ -43,6 +43,7 @@ public class PublishOnFtp extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
 
+        String sftp = request.getParameter("sftp");
         String host = request.getParameter("host");
         String port = request.getParameter("port");
         String user = request.getParameter("user");
@@ -65,7 +66,7 @@ public class PublishOnFtp extends HttpServlet {
 
             }
             try {
-                if ("22".equals(port)) {
+                if (sftp != null) {
                     PublishFileOnSFTP publishFileOnSFTP = new PublishFileOnSFTP();
                     publishFileOnSFTP.publishFile(host, port, user, password, folder, fileList);
                 } else {
