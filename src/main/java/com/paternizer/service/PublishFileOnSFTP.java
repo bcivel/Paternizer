@@ -15,7 +15,6 @@ import com.jcraft.jsch.SftpException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Properties;
 
@@ -33,7 +32,7 @@ public class PublishFileOnSFTP {
 
         Session session = jsch.getSession(user, host, Integer.valueOf(port));
         // Java 6 version
-        session.setPassword(password.getBytes(Charset.forName("ISO-8859-1")));
+        session.setPassword(password);
 
         Properties config = new java.util.Properties();
         config.put("StrictHostKeyChecking", "no");
