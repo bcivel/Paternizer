@@ -29,8 +29,19 @@ public class ExecuteQJMS extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
+
+        String server = request.getParameter("server");
+        String user = request.getParameter("user");
+        String password = request.getParameter("password");
+        String queueName = request.getParameter("queueName");
+        String fileName = request.getParameter("fileName");
+        String filePath = request.getParameter("filePath");
+        String lpar = request.getParameter("lpar");
+        String job = request.getParameter("job");
+
         PrintWriter out = response.getWriter();
+        response.setContentType("text/html;charset=UTF-8");
+
         /* TODO output your page here. You may use following sample code. */
         out.println("<!DOCTYPE html>");
         out.println("<html>");
@@ -39,16 +50,8 @@ public class ExecuteQJMS extends HttpServlet {
         out.println("</head>");
         out.println("<body>");
         out.println("<h1>Servlet ExecuteQJMS at " + request.getContextPath() + "</h1>");
-        try {
 
-            String server = request.getParameter("server");
-            String user = request.getParameter("user");
-            String password = request.getParameter("password");
-            String queueName = request.getParameter("queueName");
-            String fileName = request.getParameter("fileName");
-            String filePath = request.getParameter("filePath");
-            String lpar = request.getParameter("lpar");
-            String job = request.getParameter("job");
+        try {
 
             String[] args = new String[16];
             int i = 0;
