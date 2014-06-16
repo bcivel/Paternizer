@@ -20,6 +20,10 @@
         <servlet-name>GetList</servlet-name>
         <servlet-class>com.paternizer.servlet.GetList</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>ExecuteQJMS</servlet-name>
+        <servlet-class>com.paternizer.servlet.ExecuteQJMS</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>GenerateFile</servlet-name>
         <url-pattern>/GenerateFile</url-pattern>
@@ -35,6 +39,10 @@
     <servlet-mapping>
         <servlet-name>GetList</servlet-name>
         <url-pattern>/GetList</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ExecuteQJMS</servlet-name>
+        <url-pattern>/ExecuteQJMS</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
