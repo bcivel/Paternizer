@@ -85,7 +85,7 @@ public class ExecuteQJMS extends HttpServlet {
             args[i] = job;
             i++;
 
-            tibjmsQueueSender t = new tibjmsQueueSender(args);
+            tibjmsQueueSender.main(args);
 
             out.println("</body>");
             out.println("</html>");
