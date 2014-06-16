@@ -5,16 +5,9 @@
  */
 package com.paternizer.servlet;
 
-import com.tibco.tibjms.TibjmsQueueConnectionFactory;
+import com.tibco.action.jms.tibjmsQueueSender;
 import java.io.IOException;
 import java.io.PrintWriter;
-import javax.jms.JMSException;
-import javax.jms.MapMessage;
-import javax.jms.Queue;
-import javax.jms.QueueConnection;
-import javax.jms.QueueConnectionFactory;
-import javax.jms.QueueSender;
-import javax.jms.QueueSession;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -57,29 +50,43 @@ public class ExecuteQJMS extends HttpServlet {
             String lpar = request.getParameter("lpar");
             String job = request.getParameter("job");
 
-            boolean allIsOk = true;
-            try {
-                QueueConnectionFactory factory = new TibjmsQueueConnectionFactory(server);
-                QueueConnection connection = factory.createQueueConnection(user, password);
-                QueueSession session = connection.createQueueSession(false, 1);
-                Queue queue = session.createQueue(queueName);
-                QueueSender sender = session.createSender(queue);
+            String[] args = new String[16];
+            int i = 0;
+            args[i] = "-server";
+            i++;
+            args[i] = server;
+            i++;
+            args[i] = "-user";
+            i++;
+            args[i] = user;
+            i++;
+            args[i] = "-password";
+            i++;
+            args[i] = password;
+            i++;
+            args[i] = "-queue";
+            i++;
+            args[i] = queueName;
+            i++;
+            args[i] = "-filename";
+            i++;
+            args[i] = fileName;
+            i++;
+            args[i] = "-filepath";
+            i++;
+            args[i] = filePath;
+            i++;
+            args[i] = "-lpar";
+            i++;
+            args[i] = lpar;
+            i++;
+            args[i] = "-job";
+            i++;
+            args[i] = job;
+            i++;
 
-                MapMessage message = session.createMapMessage();
-                message.setString("FilePath", filePath);
-                message.setString("FileName", fileName);
-                message.setString("LPar", lpar);
-                message.setString("Job", job);
+            tibjmsQueueSender t = new tibjmsQueueSender(args);
 
-                sender.send(message);
-
-                connection.close();
-            } catch (JMSException e) {
-                out.println("An Exception occured : ");
-                out.println(e.getMessage());
-                allIsOk = false;
-                System.err.println(e.getMessage());
-            }
             out.println("</body>");
             out.println("</html>");
         } finally {
