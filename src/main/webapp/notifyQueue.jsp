@@ -13,7 +13,7 @@
     </head>
     <body>
         <h1>Notify JMS Queue</h1>
-        <form method="POST" enctype="multipart/form-data" action="ExecuteQJMS">
+        <form method="get" action="ExecuteQJMS">
             <label for="server">Server</label> <input type="text" name="server"><br/>
             <label for="user">user</label> <input type="text" name="user"><br/>
             <label for="password">password</label> <input type="text" name="password"><br/>
