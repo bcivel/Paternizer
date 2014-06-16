@@ -55,6 +55,11 @@
             <type>jar</type>
         </dependency>
         <dependency>
+            <groupId>javax.jms</groupId>
+            <artifactId>javax.jms-api</artifactId>
+            <version>2.0-b13</version>
+        </dependency>
+        <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-web-api</artifactId>
             <version>6.0</version>
@@ -81,6 +86,14 @@
                 <artifactId>jsch</artifactId>
                 <version>0.1.51</version>
         </dependency>
+        <dependency>    
+            <groupId>tibco</groupId>    
+            <artifactId>queue</artifactId>    
+            <version>0.0.1</version>    
+            <scope>system</scope>    
+            <systemPath>${basedir}/src/main/webapp/WEB-INF/lib/QueueSenderMapMessage.jar</systemPath>   
+        </dependency>  
+
     </dependencies>
 
     <build>
