@@ -46,18 +46,18 @@ public class ExecuteQJMS extends HttpServlet {
         out.println("</head>");
         out.println("<body>");
         out.println("<h1>Servlet ExecuteQJMS at " + request.getContextPath() + "</h1>");
-//        try {
+        try {
 
             String server = request.getParameter("server");
             String user = request.getParameter("user");
             String password = request.getParameter("password");
-            String queueName = request.getParameter("queue");
-            String fileName = request.getParameter("filename");
-            String filePath = request.getParameter("filepath");
+            String queueName = request.getParameter("queueName");
+            String fileName = request.getParameter("fileName");
+            String filePath = request.getParameter("filePath");
             String lpar = request.getParameter("lpar");
             String job = request.getParameter("job");
 
-        boolean allIsOk = true;
+            boolean allIsOk = true;
             try {
                 QueueConnectionFactory factory = new TibjmsQueueConnectionFactory(server);
                 QueueConnection connection = factory.createQueueConnection(user, password);
@@ -82,9 +82,9 @@ public class ExecuteQJMS extends HttpServlet {
             }
             out.println("</body>");
             out.println("</html>");
-//        } finally {
-//            out.close();
-//        }
+        } finally {
+            out.close();
+        }
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
