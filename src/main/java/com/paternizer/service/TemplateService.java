@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import static org.apache.commons.io.HexDump.EOL;
 
 /**
  *
@@ -45,7 +44,7 @@ public class TemplateService {
                 break;
             }
             template.append(line);
-            template.append(EOL);
+            template.append("\n");
         }
 
         return template.toString();
