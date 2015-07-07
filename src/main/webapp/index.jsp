@@ -65,7 +65,7 @@
             if (parameters != null) {
 %>
                 <h3>Template :</h3>
-                <span><%=template%></span><br>
+                <span><xmp><%=template%></xmp></span><br>
                 <form action="GenerateFile">
                     <h3>Parameters :</h3>
                     <label for="fileURL">template URL : </label><input id="fileURL" style="width:800px" name="fileURL" type="text" value="<%=request.getParameter("fileURL")%>"><br>

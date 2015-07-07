@@ -12,11 +12,11 @@ package com.paternizer.constants;
  */
 public class FileConstants {
 
-    public static String DOCUMENT_FOLDER = "D:\\PaternizerDocuments\\";
-    public static String FOLDER_SEPARATOR = "\\";
-    public static String DOCUMENT_URL = "http://192.168.134.35/PaternizerDocuments/";
+//    public static String DOCUMENT_FOLDER = "D:\\PaternizerDocuments\\";
+//    public static String FOLDER_SEPARATOR = "\\";
+//    public static String DOCUMENT_URL = "http://192.168.134.35/PaternizerDocuments/";
 
-//    public static String DOCUMENT_FOLDER = "/srv/http/";
-//    public static String FOLDER_SEPARATOR = "/";
-//    public static String DOCUMENT_URL = "http://localhost/";
+    public static String DOCUMENT_FOLDER = "C:\\PaternizerDocuments\\";
+    public static String FOLDER_SEPARATOR = "\\";
+    public static String DOCUMENT_URL = "http://localhost/";
 }

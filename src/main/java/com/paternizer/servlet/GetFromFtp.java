@@ -9,6 +9,7 @@ package com.paternizer.servlet;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
 import com.paternizer.constants.FileConstants;
+import com.paternizer.service.GetFileFromFTP;
 import com.paternizer.service.PublishFileOnFTP;
 import com.paternizer.service.PublishFileOnSFTP;
 import java.io.File;
@@ -25,9 +26,9 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  *
- * @author memiks
+ * @author bcivel
  */
-public class PublishOnFtp extends HttpServlet {
+public class GetFromFtp extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -42,50 +43,24 @@ public class PublishOnFtp extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
-
+        
         String sftp = request.getParameter("sftp");
         String host = request.getParameter("host");
         String port = request.getParameter("port");
         String user = request.getParameter("user");
         String password = request.getParameter("password");
         String folder = request.getParameter("folder");
-
-        if (request.getParameterValues("fileName") != null) {
-            String[] fileNames = request.getParameterValues("fileName");
-            List<File> fileList = new ArrayList<File>();
-            for (int i = 0; i < fileNames.length; i++) {
-                try {
-                    String fileName = fileNames[i];
-                    File file = new File(FileConstants.DOCUMENT_FOLDER + "temp" + FileConstants.FOLDER_SEPARATOR + fileName);
-                   System.err.println(" FILE : " + file.getAbsolutePath());
-
-                    fileList.add(file);
-                } finally {
-                    out.close();
-                }
-
-            }
-            try {
-                if (sftp != null) {
-                    PublishFileOnSFTP publishFileOnSFTP = new PublishFileOnSFTP();
-                    publishFileOnSFTP.publishFile(host, port, user, password, folder, fileList);
-                } else {
-                    PublishFileOnFTP publishFileOnFTP = new PublishFileOnFTP();
-                    publishFileOnFTP.publishFile(host, port, user, password, folder, fileList);
-                }
-                for (File file : fileList) {
-                    out.println(" FILE : " + file.getName() + " Uploaded<br>");
-
-                }
-            } catch (JSchException ex) {
-                Logger.getLogger(PublishOnFtp.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (SftpException ex) {
-                Logger.getLogger(PublishOnFtp.class.getName()).log(Level.SEVERE, null, ex);
-            } finally {
-                out.close();
-            }
+        String fileName = request.getParameter("fileName");
+        
+        if (sftp != null) {
+            GetFileFromFTP getFromFTP = new GetFileFromFTP();
+            getFromFTP.getFile(host, port, user, password, folder, fileName);
+        } else {
+            GetFileFromFTP getFromFTP = new GetFileFromFTP();
+            getFromFTP.getFile(host, port, user, password, folder, fileName);
         }
-    }
+        }
+    
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
