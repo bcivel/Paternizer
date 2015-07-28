@@ -64,4 +64,36 @@ public class PublishOnTibcoJmsQueue {
         }
 
     }
+    public void sendXmlByJms(String host, String port, String user, String pass, String queueName,  String xml) {
+
+        try {
+            QueueConnectionFactory qcf = new TibjmsQueueConnectionFactory("tcp://"+host+":"+port);
+            connection = qcf.createQueueConnection(user, pass);
+            QueueSession session = connection.createQueueSession(false, javax.jms.Session.AUTO_ACKNOWLEDGE);
+
+            javax.jms.Queue queue = session.createQueue(queueName);
+            QueueSender sender = session.createSender(queue);
+
+            TextMessage message = session.createTextMessage();
+            message.setText(xml);
+            sender.send(message);
+            
+            connection.close();
+            
+        } catch (JMSException ex) {
+            java.util.logging.Logger.getLogger(PublishOnTibcoJmsQueue.class.getName()).log(Level.SEVERE, null, ex);
+            try {
+                connection.close();
+            } catch (JMSException ex1) {
+                java.util.logging.Logger.getLogger(PublishOnTibcoJmsQueue.class.getName()).log(Level.SEVERE, null, ex1);
+            }
+        } finally {
+            try {
+                connection.close();
+            } catch (JMSException ex) {
+                java.util.logging.Logger.getLogger(PublishOnTibcoJmsQueue.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+    }
 }

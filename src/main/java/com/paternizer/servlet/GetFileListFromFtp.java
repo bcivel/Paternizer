@@ -3,16 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.paternizer.servlet;
 
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
-import com.paternizer.constants.FileConstants;
-import com.paternizer.service.GetFileFromFTP;
-import com.paternizer.service.PublishFileOnFTP;
-import com.paternizer.service.PublishFileOnSFTP;
-import java.io.File;
+import com.paternizer.service.GetFileListFromFTP;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -20,7 +15,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -30,7 +24,7 @@ import org.json.JSONArray;
  *
  * @author bcivel
  */
-public class GetFromFtp extends HttpServlet {
+public class GetFileListFromFtp extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -46,6 +40,7 @@ public class GetFromFtp extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
         
+        try{
         String sftp = request.getParameter("sftp");
         String host = request.getParameter("host");
         String port = request.getParameter("port");
@@ -53,40 +48,45 @@ public class GetFromFtp extends HttpServlet {
         String password = request.getParameter("password");
         String folder = request.getParameter("folder");
         String fileName = request.getParameter("fileName");
-        String result = "";
-        if (sftp != null) {
-            GetFileFromFTP getFromFTP = new GetFileFromFTP();
-            try {
-                result = getFromFTP.getFileOnSFTP(host, port, user, password, folder, fileName);
-            } catch (JSchException ex) {
-                Logger.getLogger(GetFromFtp.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (SftpException ex) {
-                Logger.getLogger(GetFromFtp.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        } else {
-            GetFileFromFTP getFromFTP = new GetFileFromFTP();
-            result = getFromFTP.getFile(host, port, user, password, folder, fileName);
-        }
+        List<String> result = new ArrayList();
         JSONArray data = new JSONArray();
-
-            data.put(result);
         
+        if (sftp != null) {
+            GetFileListFromFTP getFromFTP = new GetFileListFromFTP();
+            result = getFromFTP.GetFileListFromSFTP(host, port, user, password, folder);
+        } else {
+            GetFileListFromFTP getFromFTP = new GetFileListFromFTP();
+            data = getFromFTP.getFileList(host, port, user, password, folder, fileName);
+        }
+        
+
+//        for (String res : result) {
+//            data.put(res);
+//        }
         response.setContentType("application/json");
         response.getWriter().print(data.toString());
-}
-    
+        
+        } catch (JSchException ex) {
+            Logger.getLogger(GetFileListFromFtp.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SftpException ex) {
+            Logger.getLogger(GetFileListFromFtp.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            out.close();
+        }
+    }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+
+// <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+/**
+ * Handles the HTTP <code>GET</code> method.
+ *
+ * @param request servlet request
+ * @param response servlet response
+ * @throws ServletException if a servlet-specific error occurs
+ * @throws IOException if an I/O error occurs
+ */
+@Override
+        protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
     }
@@ -100,7 +100,7 @@ public class GetFromFtp extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+        protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
     }
@@ -111,7 +111,7 @@ public class GetFromFtp extends HttpServlet {
      * @return a String containing servlet description
      */
     @Override
-    public String getServletInfo() {
+        public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
 

@@ -1,0 +1,25 @@
+<div class="col-sm-10">
+    <div class="col-sm-10">
+        <div class=" panel panel-primary">
+            <div class="panel-heading">Template :</div>
+            <span id="templateContent"></span>
+        </div>
+    </div>
+    <div class="col-sm-10">
+        <div class=" panel panel-primary">
+            <div class="panel-heading">Parameters :</div>
+            <form action="GenerateFile">
+                <div class="form-group">
+                    <label class="label label-primary" for="fileURL">template URL : </label>
+                    <input class="form-control input-normal" id="fileURL" name="fileURL" type="text">
+                </div>
+                <div class="form-group">
+                    <label class="label label-primary" for="fileName">file name : </label><input class="form-control input-normal" id="fileName" name="fileName" type="text">
+                </div>
+                <div id="parametersDiv"></div>
+                <input name="fromGui" value="Y" style="display:none">
+                <button class="btn btn-success" id="submit" type="submit">Generate</button>
+            </form>
+        </div>
+    </div>
+</div>

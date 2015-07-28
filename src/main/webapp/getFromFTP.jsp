@@ -23,29 +23,58 @@
     </head>
     <body>
         <script>
-//            loadJSON('GetList', "&type=temp",
-//                    function(data) {
-//                        for (var i = 0; i < data.length; i++) {
-//                            var newInput = document.createElement("input");
-//                            newInput.setAttribute('type', 'checkbox');
-//                            newInput.setAttribute('value', data[i]);
-//                            newInput.setAttribute('name', 'fileName');
-//                            newInput.setAttribute('id', 'file_' + data[i]);
-//                            document.getElementById("generatedList").appendChild(newInput);
-//                            var newLink = document.createElement("a");
-//                            newLink.href = "?fileURL=<%=FileConstants.DOCUMENT_URL%>/temp/" + data[i];
-//                            newLink.setAttribute('id', data[i]);
-//                            document.getElementById("generatedList").appendChild(newLink);
-//                            var br = document.createElement("br");
-//                            document.getElementById("generatedList").appendChild(br);
-//                            document.getElementById(data[i]).innerHTML = data[i];
-//                        }
-//                    },
-//                    function(xhr) {
-//                        console.error(xhr);
-//                    }
-//            );
+            function loadFilesFromFTP() {
+                $("#resultFile").empty();
+                $("#contentFtpFiles").empty().append("<div id='jstree_demo_div2'></div>");
+                var sftp = $("#sftp:checked").val() === undefined ? "" : "&sftp=" + $("#sftp:checked").val();
+//                
+                $('#jstree_demo_div2').on('changed.jstree', function(e, data) {
+                    var i, j, r = [], path;
+                    for (i = 0, j = data.selected.length; i < j; i++) {
+                        r.push(data.instance.get_node(data.selected[i]).text);
+                    }
+                    if (data.node.icon === true){
+                        path = data.node.original.folder + data.node.original.id;
+                    }
+                    var parents = "";
+                    for (var par = data.node.parents.length-1 ; par >= 0 ; par --){
+                      parents += "/" + data.node.parents[par]; 
+                    }
+                    loadFromFTP(r.join(', '), parents);
+                    $('#event_result').html('Selected: ' + r.join(', '));
+                }).jstree({
+                    'core': {
+                        'data': {
+                            'url': 'GetFileListFromFtp?host=' + $("#host").val() + '&port=' + $("#port").val() + sftp + '&user=' + $("#user").val() + '&password=' + $("#password").val() + '&folder=' + $("#folder").val() ,
+                            'data': function(node) {
+                                return {'id': node.id};
+                            }
+                        }
+                    }});
 
+            }
+                            
+
+            function loadFromFTP(file, parents) {
+                $("#resultFile").empty();
+                var sftp = $("#sftp:checked").val() === undefined ? "" : "&sftp=" + $("#sftp:checked").val();
+                $.getJSON("GetFromFtp?fileName=" + file + "&host=" + $("#host").val() + "&port=" + $("#port").val() + sftp + "&user=" + $("#user").val() + "&password=" + $("#password").val() + "&folder=" + $("#folder").val()+parents.split("/#")[1],
+                        function(data) {
+                            $("#resultFile").empty();
+                            var doc = document.createElement("xmp");
+                            doc.innerHTML = data;
+                            document.getElementById("resultFile").appendChild(doc);
+                        },
+                        function(xhr) {
+                            console.error(xhr);
+                        }
+                );
+            }
+            ;
+
+
+        </script> 
+        <script>
             $(document).ready(function() {
                 $('#jstree_demo_div').jstree({
                     'core': {
@@ -63,50 +92,11 @@
                     'plugins': ["wholerow", "checkbox"]});
 
             });
-        </script> 
-        <%
-            String template;
-            TemplateService templateService = new TemplateService();
-            try {
-                URL templateURL = new URL(request.getParameter("fileURL"));
-                template = templateService.getFile(templateURL);
-            } catch (MalformedURLException e) {
-                System.err.println(" Unknow URL : " + request.getParameter("fileURL") + ".");
-                template = null;
-            } catch (IOException e) {
-                System.err.println(e);
-                template = null;
-            }
-
-        %>
-        <script>
-            function saveForm() {
-                var param = "";
-                $('#jstree_demo_div').find("li[aria-selected=true]").each(function(i, e) {
-                    param += "&fileName=" + e.id;
-                });
-
-                param += "&host=" + $('#host').val();
-                param += "&port=" + $('#port').val();
-                param += "&user=" + $('#user').val();
-                param += "&password=" + $('#password').val();
-                param += "&folder=" + $('#folder').val();
-                if ($('#sftp:checked').val() !== undefined){
-                    param += "&sftp=" + $('#sftp:checked').val();
-                }
-                console.log(param);
-                loadJSON('PublishOnFtp', param,
-                        function(data) {
-
-                        },
-                        function(xhr) {
-                            console.error(xhr);
-                        }
-                );
-            }
 
         </script>
-        <%            String host;
+        <%@ include file="include/header.jsp"%>
+        <%
+            String host;
             if (request.getParameter("host") != null && request.getParameter("host").compareTo("") != 0) {
                 host = request.getParameter("host");
             } else {
@@ -143,7 +133,6 @@
                 folder = new String("");
             }
         %>
-        <%@ include file="include/header.jsp"%>
         <input hidden="hidden" id="defHost" value="<%=host%>">
         <input hidden="hidden" id="defPort" value="<%=port%>">
         <input hidden="hidden" id="defSftp" value="<%=sftp%>">
@@ -151,60 +140,63 @@
         <input hidden="hidden" id="defPass" value="<%=password%>">
         <input hidden="hidden" id="defFolder" value="<%=folder%>">
         <div class="col-sm-12">
-            <div class="col-sm-6">
-                <div class="panel panel-primary">
-                    <div class="panel-heading">Select Files to upload</div>
-                    <div id="jstree_demo_div">
-                        <ul style="height: 600px" id="generatedList" ></ul>
+            <div class="panel panel-primary">
+                <div class="panel-heading">FTP Information
+                <button class="btn btn-success" onclick="loadFilesFromFTP()">Connection</button>
+                </div>
+                <div class="panel-body">
+                    <div class="form-group col-sm-2">
+                        <label class="label label-primary" for="host">FTP Host</label>
+                        <input type="text" class="form-control input-normal" id="host" name="host" onBlur="recordCookie('host', 'PaternizerHost')"/>
+                    </div>
+                    <div class="form-group col-sm-2">
+                        <label class="label label-primary" for="port">Port</label>
+                        <input type="text" class="form-control input-normal" id="port" name="port" onBlur="recordCookie('port', 'PaternizerPort')"/>
+                    </div>
+                    <div class="checkbox col-sm-2">
+                        <label class="label label-primary"><input type="checkbox" id="sftp" name="sftp" onBlur="recordCookie('sftp', 'PaternizerSftp')"/>Is SFTP ?</label>
+
+                    </div>
+                    <div class="form-group col-sm-2">
+                        <label class="label label-primary" for="user">User</label>
+                        <input type="text" class="form-control input-normal" id="user" name="user" onBlur="recordCookie('user', 'PaternizerUser')"/>
+                    </div>
+                    <div class="form-group col-sm-2">
+                        <label class="label label-primary" for="password">Password</label>
+                        <input type="password" class="form-control input-normal" id="password" name="password" onBlur="recordCookie('password', 'PaternizerPass')"/>
+                    </div>
+                    <div class="form-group col-sm-2">
+                        <label class="label label-primary" for="foler">Destination Folder</label>
+                        <input type="text" class="form-control input-normal" id="folder" name="folder" onBlur="recordCookie('folder', 'PaternizerFolder')"/>
+                    </div>
+                </div></div>
+        </div>
+        <div class="col-sm-3">
+            <div class="panel panel-primary" style="overflow:auto">
+                <div class="panel-heading">Select Files to upload on FTP
+                <button class="btn btn-danger" type="button" onclick="saveForm()">Upload</button>
+                </div>
+                <div id="jstree_demo_div">
+                    <ul style="height: 600px" id="generatedList" ></ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <div class="panel panel-primary" style="overflow:auto">
+                <div class="panel-heading">FTP Tree</div>
+                <div id="contentFtpFiles" class="panel-body">
+                    <div id="jstree_demo_div2">
                     </div>
                 </div>
             </div>
-            <div class="col-sm-6">
-                <div class="panel panel-primary">
-                    <div class="panel-heading">FTP Information</div>
-                    <div class="panel-body">
-                        <div class="form-group  col-sm-6">
-                            <label class="label label-primary" for="host">FTP Host</label>
-                            <input type="text" class="form-control input-normal" id="host" name="host" onBlur="recordCookie('host', 'PaternizerHost')"/>
-                        </div>
-                        <div class="form-group  col-sm-6">
-                            <label class="label label-primary" for="port">Port</label>
-                            <input type="text" class="form-control input-normal" id="port" name="port" onBlur="recordCookie('port', 'PaternizerPort')"/>
-                        </div>
-                        <div class="form-group  col-sm-6">
-                            <label class="label label-primary" for="user">User</label>
-                            <input type="text" class="form-control input-normal" id="user" name="user" onBlur="recordCookie('user', 'PaternizerUser')"/>
-                        </div>
-                        <div class="form-group  col-sm-6">
-                            <label class="label label-primary" for="password">Password</label>
-                            <input type="password" class="form-control input-normal" id="password" name="password" onBlur="recordCookie('password', 'PaternizerPass')"/>
-                        </div>
-                        <div class="form-group  col-sm-5">
-                            <label class="label label-primary" for="foler">Destination Folder</label>
-                            <input type="text" class="form-control input-normal" id="folder" name="folder" onBlur="recordCookie('folder', 'PaternizerFolder')"/>
-                        </div>
-                        <div class="form-group checkbox   col-sm-1">
-                            <label class="label label-primary">Is SFTP ?</label>
-                            <input type="checkbox" id="sftp" name="sftp" onBlur="recordCookie('sftp', 'PaternizerSftp')"/>
-
-                        </div>
-                        <div class="text-right col-sm-6">
-                            <button class="btn btn-success" type="button" onclick="saveForm()">Upload</button>
-                        </div>
-                    </div></div>
-            </div>
         </div>
-        <div class="col-sm-12">
-            <%    if (template != null) {
-            %>
-            <div class="panel panel-primary">
+        <div class="col-sm-7">
+            <div class="panel panel-primary" style="overflow:auto">
                 <div class="panel-heading">File View</div>
                 <div class="panel-body">
-                    <b><a href="<%=request.getParameter("fileURL")%>"><%=request.getParameter("fileURL")%></a></b>
-                    <span><xmp><%=template%></xmp></span>
+                    <div id="resultFile"></div>
                 </div>
             </div>
-            <%}%>
         </div>
 
         <br>
@@ -267,6 +259,34 @@
 //                    setCookie('PaternizerFolder', 'folder');
 //                }
             });
+
+        </script>
+        <script>
+            function saveForm() {
+                var param = "";
+                $('#jstree_demo_div').find("li[aria-selected=true]").each(function(i, e) {
+                    param += "&fileName=" + e.id;
+                });
+
+                param += "&host=" + $('#host').val();
+                param += "&port=" + $('#port').val();
+                param += "&user=" + $('#user').val();
+                param += "&password=" + $('#password').val();
+                param += "&folder=" + $('#folder').val();
+                if ($('#sftp:checked').val() !== undefined){
+                    param += "&sftp=" + $('#sftp:checked').val();
+                }
+                console.log(param);
+                loadJSON('PublishOnFtp', param,
+                        function(data) {
+                            
+                        },
+                        function(xhr) {
+                            console.error(xhr);
+                        }
+                );
+                loadFilesFromFTP();
+            }
 
         </script>
     </body>

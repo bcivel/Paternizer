@@ -67,13 +67,19 @@ public class GenerateFile extends HttpServlet {
                 if (request.getParameter("fileName") != null && !"".equals(request.getParameter("fileName").trim())) {
                     //TODO Send extension in parameter
                     File file = new File(FileConstants.DOCUMENT_FOLDER + "temp" + FileConstants.FOLDER_SEPARATOR + request.getParameter("fileName"));
-                    System.err.println(" FILE : " + file.getAbsolutePath());
+//                    if (!file.exists()) {
+//                            file.mkdirs();
+//                        }
 
                     FileOutputStream fileOutputStream = new FileOutputStream(file);
                     fileOutputStream.write(template.getBytes());
                     fileOutputStream.close();
 
+                    if (request.getParameter("fromGui")==null){
                     out.println(FileConstants.DOCUMENT_URL + "temp" + FileConstants.FOLDER_SEPARATOR + request.getParameter("fileName"));
+                    } else {
+                    response.sendRedirect("./uploadOnFtp.jsp?fileURL="+FileConstants.DOCUMENT_URL + "temp" + FileConstants.FOLDER_SEPARATOR + request.getParameter("fileName"));
+                    }
                 } else {
                     out.println(template);
                 }

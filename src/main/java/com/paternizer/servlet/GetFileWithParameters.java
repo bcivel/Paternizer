@@ -6,31 +6,24 @@
 
 package com.paternizer.servlet;
 
-import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.SftpException;
-import com.paternizer.constants.FileConstants;
-import com.paternizer.service.GetFileFromFTP;
-import com.paternizer.service.PublishFileOnFTP;
-import com.paternizer.service.PublishFileOnSFTP;
-import java.io.File;
+import com.paternizer.service.TemplateService;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  *
  * @author bcivel
  */
-public class GetFromFtp extends HttpServlet {
+public class GetFileWithParameters extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -45,36 +38,33 @@ public class GetFromFtp extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
-        
-        String sftp = request.getParameter("sftp");
-        String host = request.getParameter("host");
-        String port = request.getParameter("port");
-        String user = request.getParameter("user");
-        String password = request.getParameter("password");
-        String folder = request.getParameter("folder");
-        String fileName = request.getParameter("fileName");
-        String result = "";
-        if (sftp != null) {
-            GetFileFromFTP getFromFTP = new GetFileFromFTP();
+        String template;
+            TemplateService templateService = new TemplateService();
             try {
-                result = getFromFTP.getFileOnSFTP(host, port, user, password, folder, fileName);
-            } catch (JSchException ex) {
-                Logger.getLogger(GetFromFtp.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (SftpException ex) {
-                Logger.getLogger(GetFromFtp.class.getName()).log(Level.SEVERE, null, ex);
+                URL templateURL = new URL(request.getParameter("fileURL"));
+                template = templateService.getFile(templateURL);
+            } catch (MalformedURLException e) {
+                System.err.println(" Unknow URL : " + request.getParameter("fileURL") + ".");
+                template = null;
+            } catch (IOException e) {
+                System.err.println(e);
+                template = null;
             }
-        } else {
-            GetFileFromFTP getFromFTP = new GetFileFromFTP();
-            result = getFromFTP.getFile(host, port, user, password, folder, fileName);
-        }
-        JSONArray data = new JSONArray();
-
-            data.put(result);
-        
-        response.setContentType("application/json");
-        response.getWriter().print(data.toString());
-}
-    
+            
+            List<String> parameters = templateService.getParameters(template);
+            JSONArray arr = new JSONArray();
+            for (String param : parameters){
+            arr.put(param);
+            }
+            
+            
+            JSONObject obj = new JSONObject();
+            obj.put("text", template);
+            obj.put("parameters", arr);
+            
+            response.setContentType("application/json");
+        response.getWriter().print(obj.toString());
+    }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**

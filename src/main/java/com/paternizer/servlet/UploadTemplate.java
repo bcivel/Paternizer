@@ -58,6 +58,7 @@ public class UploadTemplate extends HttpServlet {
                 Iterator iterator = items.iterator();
                 Iterator iterator2 = items2.iterator();
                 String idNC = "";
+                String path = "/";
 
                 while (iterator.hasNext()) {
                     FileItem item = (FileItem) iterator.next();
@@ -66,7 +67,8 @@ public class UploadTemplate extends HttpServlet {
                         String name = item.getFieldName();
                         if (name.equals("template")) {
                             idNC = item.getString();
-                            System.out.println(idNC);
+                        } else if (name.equals("path")){
+                            path = item.getString();
                         }
                     }
                 }
@@ -76,9 +78,7 @@ public class UploadTemplate extends HttpServlet {
 
                     if (!item.isFormField()) {
                         fileName = item.getName();
-                        System.out.print(item.getSize());
-
-                        String root = FileConstants.DOCUMENT_FOLDER + "templates" + FileConstants.FOLDER_SEPARATOR;
+                        String root = FileConstants.DOCUMENT_FOLDER + "templates" + path;
                         File pathFile = new File(root + idNC);
                         if (!pathFile.exists()) {
                             pathFile.mkdirs();

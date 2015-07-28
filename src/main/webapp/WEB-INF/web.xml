@@ -32,6 +32,18 @@
         <servlet-name>GetFromFtp</servlet-name>
         <servlet-class>com.paternizer.servlet.GetFromFtp</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>GetFileListFromFtp</servlet-name>
+        <servlet-class>com.paternizer.servlet.GetFileListFromFtp</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>PublishOnQJMS</servlet-name>
+        <servlet-class>com.paternizer.servlet.PublishOnQJMS</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>GetFileWithParameters</servlet-name>
+        <servlet-class>com.paternizer.servlet.GetFileWithParameters</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>GenerateFile</servlet-name>
         <url-pattern>/GenerateFile</url-pattern>
@@ -59,6 +71,18 @@
     <servlet-mapping>
         <servlet-name>GetFromFtp</servlet-name>
         <url-pattern>/GetFromFtp</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>GetFileListFromFtp</servlet-name>
+        <url-pattern>/GetFileListFromFtp</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>PublishOnQJMS</servlet-name>
+        <url-pattern>/PublishOnQJMS</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>GetFileWithParameters</servlet-name>
+        <url-pattern>/GetFileWithParameters</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

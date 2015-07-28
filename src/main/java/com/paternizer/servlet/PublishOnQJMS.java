@@ -8,29 +8,30 @@ package com.paternizer.servlet;
 
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
-import com.paternizer.constants.FileConstants;
-import com.paternizer.service.GetFileFromFTP;
 import com.paternizer.service.PublishFileOnFTP;
 import com.paternizer.service.PublishFileOnSFTP;
+import com.paternizer.service.PublishOnTibcoJmsQueue;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.json.JSONArray;
+import org.apache.commons.io.FileUtils;
 
 /**
  *
  * @author bcivel
  */
-public class GetFromFtp extends HttpServlet {
+public class PublishOnQJMS extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -45,36 +46,36 @@ public class GetFromFtp extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
-        
-        String sftp = request.getParameter("sftp");
+
         String host = request.getParameter("host");
         String port = request.getParameter("port");
         String user = request.getParameter("user");
         String password = request.getParameter("password");
-        String folder = request.getParameter("folder");
-        String fileName = request.getParameter("fileName");
-        String result = "";
-        if (sftp != null) {
-            GetFileFromFTP getFromFTP = new GetFileFromFTP();
-            try {
-                result = getFromFTP.getFileOnSFTP(host, port, user, password, folder, fileName);
-            } catch (JSchException ex) {
-                Logger.getLogger(GetFromFtp.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (SftpException ex) {
-                Logger.getLogger(GetFromFtp.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        } else {
-            GetFileFromFTP getFromFTP = new GetFileFromFTP();
-            result = getFromFTP.getFile(host, port, user, password, folder, fileName);
-        }
-        JSONArray data = new JSONArray();
+        String queueName = request.getParameter("queueName");
 
-            data.put(result);
-        
-        response.setContentType("application/json");
-        response.getWriter().print(data.toString());
-}
-    
+        if (request.getParameterValues("fileName") != null) {
+            String[] fileNames = request.getParameterValues("fileName");
+            List<File> fileList = new ArrayList<File>();
+            for (int i = 0; i < fileNames.length; i++) {
+                try {
+                    String fileName = fileNames[i];
+                    File file = new File(fileName);
+                    fileList.add(file);
+                } finally {
+                    out.close();
+                }
+
+            }
+            for (File f : fileList){
+            String str = FileUtils.readFileToString(f, "UTF-8");
+            PublishOnTibcoJmsQueue publishOnTibcoJmsQueue = new PublishOnTibcoJmsQueue();
+            publishOnTibcoJmsQueue.sendXmlByJms(host, port, user, port, queueName, str);
+            out.println(" Message : " + f.getName() + " Sent<br>");
+            }
+                        
+            
+        }
+    }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**

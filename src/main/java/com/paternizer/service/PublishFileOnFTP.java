@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.paternizer.service;
 
 import java.io.File;
@@ -30,21 +29,25 @@ public class PublishFileOnFTP {
 
         // Positionement sur le bon repertoire
         if (client.changeWorkingDirectory(folder)) {
+            FileInputStream infile2 = null;
+            try {
+                
+                for (File file : files) {
+                    infile2 = new FileInputStream(file);  //mon fichier que je veux envoyer
 
-            for (File file : files) {
-                FileInputStream infile2 = new FileInputStream(file);  //mon fichier que je veux envoyer
-                try {
                     if (client.storeFile(file.getName(), infile2)) {
                         System.err.println(" FILE " + file.getName() + " SAVED");
-                        return true;
                         // Upload OK
                     } else {
                         System.err.println(" FILE " + file.getName() + " NOT SAVED !!! " + client.getStatus());
                         // Erreur
                     }
-                } finally {
-                    infile2.close();
+
                 }
+                return true;
+            } finally {
+                if (infile2!=null)
+                    infile2.close();
             }
         }
         if (client.isConnected()) {
@@ -52,6 +55,5 @@ public class PublishFileOnFTP {
         }
         return false;
     }
-
 
 }

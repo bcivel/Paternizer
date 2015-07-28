@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.paternizer.servlet;
 
 import com.paternizer.service.ReadTibcoJmsQueue;
@@ -13,6 +12,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  *
@@ -34,10 +35,55 @@ public class ReadJmsQueue extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
         try {
+            String queueName = request.getParameter("queueName")==null?"":request.getParameter("queueName");
+            String host = request.getParameter("host")==null?"":request.getParameter("host");
+            String port = request.getParameter("port")==null?"":request.getParameter("port");
+            String user = request.getParameter("user")==null?"":request.getParameter("user");
+            String pass = request.getParameter("password")==null?"":request.getParameter("password");
+            String serverUrl = "tcp://"+host+":"+port;
+//String serverUrl = "tcp://tib1prl4:15130";
+//    String user = "admin";
+//    String pass = "Flow@RE7T";
+//    private String queueName = "APP.RFR.Publication.MediaRequest.001.TO.MEDIA-SERVEUR";
+//localhost:8080/Paternizer/ReadJmsQueue?queueName=APP.RFR.Publication.MediaRequest.001.TO.MEDIA-SERVEUR&host=tib1prl4&port=15130&user=admin&pass=Flow@RE7T
+
+            if (queueName.isEmpty()||host.isEmpty()||port.isEmpty()||null==user||null==pass){
+            out.print("<h3>These Parameters are mandatory :</h3><ul><li>queueName</li><li>host</li><li>port</li><li>user</li><li>password</li></ul>");
+            }else{
             ReadTibcoJmsQueue rtjq = new ReadTibcoJmsQueue();
-            rtjq.readQueue();
+            JSONArray data = rtjq.readQueue(serverUrl, user, pass, queueName);
             
-        } finally {
+//            JSONArray data = new JSONArray();
+//            JSONObject obj = new JSONObject();
+//            obj.put("text", "toto");
+//             obj.put("content", "<xml>toto tutu</xml>");
+//                obj.put("id", "12345");
+//                obj.put("priority", "P1");
+//                obj.put("type", "file");
+//                obj.put("parent", "#");
+//                obj.put("folder", "#");
+//                obj.put("name", "12345");
+//                obj.put("icon", "jstree-file");
+//                data.put(obj);
+//                obj = new JSONObject();
+//            obj.put("text", "tutu");
+//             obj.put("content", "<xml>toto tutu tit tetet</xml>");
+//                obj.put("id", "123456");
+//                obj.put("priority", "P1");
+//                obj.put("type", "file");
+//                obj.put("parent", "#");
+//                obj.put("folder", "#");
+//                obj.put("name", "123456");
+//                obj.put("icon", "jstree-file");
+//                data.put(obj);
+                
+            response.setContentType("application/json");
+        response.getWriter().print(data.toString());
+            }
+        } catch(Exception ex) {
+            out.print("Exception found : " + ex);
+        }
+        finally {
             out.close();
         }
     }

@@ -56,7 +56,8 @@ public class PublishOnFtp extends HttpServlet {
             for (int i = 0; i < fileNames.length; i++) {
                 try {
                     String fileName = fileNames[i];
-                    File file = new File(FileConstants.DOCUMENT_FOLDER + "temp" + FileConstants.FOLDER_SEPARATOR + fileName);
+//                    File file = new File(FileConstants.DOCUMENT_FOLDER + "temp" + FileConstants.FOLDER_SEPARATOR + fileName);
+                    File file = new File(fileName);
                    System.err.println(" FILE : " + file.getAbsolutePath());
 
                     fileList.add(file);
