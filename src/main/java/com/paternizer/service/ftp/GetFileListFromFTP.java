@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.paternizer.service;
+package com.paternizer.service.ftp;
 
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelSftp;
@@ -34,6 +34,7 @@ public class GetFileListFromFTP {
     public JSONArray getFileList(String host, String port, String user, String password, String folder, String fileName) throws IOException {
         JSONArray success = new JSONArray();
         FTPClient client = new FTPClient();
+        System.out.print("trying to connect" + host + ":" + Integer.valueOf(port));
         client.connect(host, Integer.valueOf(port));
         System.out.print(client.isConnected());
         if (user != null && password != null) {
@@ -65,7 +66,7 @@ public class GetFileListFromFTP {
     private JSONArray getListOfItem(FTPClient client, String folder, JSONArray data, String parentName) throws IOException {
 
         if (client.changeWorkingDirectory(folder)) {
-            System.out.print("changed to folder"+folder);
+            System.out.print("changed to folder" + folder);
             FTPFile[] files = client.listFiles();
             if (files != null) {
                 for (int i = 0; i < files.length; i++) {
@@ -98,13 +99,13 @@ public class GetFileListFromFTP {
         return data;
     }
 
-    public List<String> GetFileListFromSFTP(String host, String port, String user, String password, String folder) throws IOException, JSchException, SftpException {
+    public JSONArray GetFileListFromSFTP(String host, String port, String user, String password, String folder) throws IOException, JSchException, SftpException {
         JSch jsch = new JSch();
-        List<String> success = new ArrayList();
+        JSONArray success = new JSONArray();
         if (user == null || password == null) {
             return success;
         }
-
+System.out.print("trying to connect" + host + ":" + Integer.valueOf(port));
         Session session = jsch.getSession(user, host);
         // Java 6 version
         session.setPassword(password);
@@ -114,6 +115,7 @@ public class GetFileListFromFTP {
         session.setConfig(config);
 
         session.connect();
+        System.out.print("connected");
         if (session.isConnected()) {
             // Initializing a channel
             Channel channel = session.openChannel("sftp");
@@ -125,14 +127,19 @@ public class GetFileListFromFTP {
                 // Positionement sur le bon repertoire
                 csftp.cd(folder);
 
-                ArrayList<String> list = new ArrayList<String>();
                 Vector<LsEntry> entries = csftp.ls("*.*");
                 for (LsEntry entry : entries) {
-//                    if (entry.getFilename().toLowerCase().endsWith(".csv")) {
-                    success.add(entry.getFilename());
-//                    }
+                    JSONObject obj = new JSONObject();
+                    obj.put("type", "file");
+                    obj.put("id", entry.getFilename());
+                    obj.put("parent", folder);
+                    obj.put("text", entry.getFilename());
+                    obj.put("folder", folder);
+                    obj.put("name", entry.getFilename());
+                    obj.put("icon", "jstree-file");
+                    success.put(obj);
                 }
-
+                
                 if (csftp.isConnected()) {
                     csftp.disconnect();
                 }

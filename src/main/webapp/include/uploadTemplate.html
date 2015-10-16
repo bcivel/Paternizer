@@ -1,0 +1,22 @@
+<div data-backdrop="static" class="modal fade center" id="addEntryModal" tabindex="-1" role="dialog" aria-labelledby="addEntryModalLabel" aria-hidden="true">
+    <div class="modal-dialog nomargintop nomarginbottom">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="addEntryModalLabel" name="addEntryField">Create Project</h4>
+            </div>
+            <div class="modal-body">
+                <form method="POST" enctype="multipart/form-data" action="UploadTemplate">
+                    File to upload: <input type="file" name="template"><br/>
+                    <br/>
+                    Folder to store file: <input name="path" value="/"><br/>
+                    <button type="submit">Press to upload the file!</button>
+                </form> 
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" name="buttonClose">Close</button>
+                <button type="button" id="addEntryButton" class="btn btn-primary" name="buttonAdd">Save</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.paternizer.service;
+package com.paternizer.service.ftp;
 
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelSftp;
@@ -11,22 +11,15 @@ import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.SftpException;
-import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
-import javax.servlet.ServletOutputStream;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
+import org.json.JSONObject;
 
 /**
  *
@@ -34,11 +27,27 @@ import org.apache.commons.net.ftp.FTPFile;
  */
 public class GetFileFromFTP {
 
-    public String getFile(String host, String port, String user, String password, String folder, String fileName) throws IOException {
-        String success = "";
+    /**
+     * Get File from FTP Server. If filename is empty, it will retrieve the last
+     * file.
+     *
+     * @param host
+     * @param port
+     * @param user
+     * @param password
+     * @param folder
+     * @param fileName
+     * @return
+     * @throws IOException
+     */
+    public JSONObject getFile(String host, String port, String user, String password, String folder, String fileName) throws IOException {
+        JSONObject success = new JSONObject();
+
+        /**
+         * Connect to FTP
+         */
         FTPClient client = new FTPClient();
         client.connect(host, Integer.valueOf(port));
-        System.out.print(client.isConnected());
         if (user != null && password != null) {
             client.login(user, password);
         }
@@ -48,11 +57,12 @@ public class GetFileFromFTP {
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try {
-            // Positionement sur le bon repertoire
+            // Positioning on directory
             if (client.changeWorkingDirectory(folder)) {
 
                 FTPFile[] files = client.listFiles();
 
+                //Get list of files to get the last one
                 String lastFileName = "";
                 for (int a = files.length - 1; a > 0; a--) {
                     if (files[a].isFile()) {
@@ -66,10 +76,11 @@ public class GetFileFromFTP {
 
                 if (!"".equals(lastFileName)) {
                     if (client.retrieveFile(nameOfFileToRetrieve, baos)) {
-                        success = new String(baos.toByteArray());
+                        success.put("name", lastFileName);
+                        success.put("content", new String(baos.toByteArray()));
                     }
                 } else {
-                    success = "No File in the Folder";
+                    success = null;
                 }
             }
             if (client.isConnected()) {
@@ -79,20 +90,18 @@ public class GetFileFromFTP {
         } finally {
             try {
                 baos.close();
-            } catch (Exception ex) {
+            } catch (IOException ex) {
                 System.out.print(ex);
             }
         }
 
     }
 
-    public String getFileOnSFTP(String host, String port, String user, String password, String folder, String fileName) throws IOException, JSchException, SftpException {
+    public JSONObject getFileOnSFTP(String host, String port, String user, String password, String folder, String fileName) throws IOException, JSchException, SftpException {
         JSch jsch = new JSch();
-        String success = "";
-        if (user == null || password == null) {
-            return "USER/PASS Must be feed";
-        }
-
+        JSONObject success = new JSONObject();
+        
+        //System.out.print("trying to connect" + host + ":" + Integer.valueOf(port));
         Session session = jsch.getSession(user, host);
         // Java 6 version
         session.setPassword(password);
@@ -102,6 +111,7 @@ public class GetFileFromFTP {
         session.setConfig(config);
 
         session.connect();
+        //System.out.print("connected");
         if (session.isConnected()) {
             // Initializing a channel
             Channel channel = session.openChannel("sftp");
@@ -112,8 +122,16 @@ public class GetFileFromFTP {
 
                 // Positionement sur le bon repertoire
                 csftp.cd(folder);
+
+                if (fileName == null) {
+                    Vector<ChannelSftp.LsEntry> entries = csftp.ls("*.*");
+                    fileName = entries.get(0).getFilename();
+                }
+                //System.out.print(fileName);
+
                 InputStream is = csftp.get(fileName);
-                success = IOUtils.toString(is, "UTF-8"); 
+                success.put("name", fileName);
+                success.put("content", IOUtils.toString(is, "UTF-8"));
 
                 if (csftp.isConnected()) {
                     csftp.disconnect();
@@ -125,6 +143,7 @@ public class GetFileFromFTP {
                 return success;
             }
         }
-        return success;
+        return null;
     }
+
 }

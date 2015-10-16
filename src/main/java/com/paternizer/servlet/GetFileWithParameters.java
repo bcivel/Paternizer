@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.paternizer.servlet;
 
 import com.paternizer.service.TemplateService;
@@ -39,30 +38,31 @@ public class GetFileWithParameters extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
         String template;
-            TemplateService templateService = new TemplateService();
-            try {
-                URL templateURL = new URL(request.getParameter("fileURL"));
-                template = templateService.getFile(templateURL);
-            } catch (MalformedURLException e) {
-                System.err.println(" Unknow URL : " + request.getParameter("fileURL") + ".");
-                template = null;
-            } catch (IOException e) {
-                System.err.println(e);
-                template = null;
+        TemplateService templateService = new TemplateService();
+        try {
+            URL templateURL = new URL("file:///" + request.getParameter("fileURL"));
+            template = templateService.getFile(templateURL);
+        } catch (MalformedURLException e) {
+            System.err.println(" Unknow URL : " + request.getParameter("fileURL") + ".");
+            template = null;
+        } catch (IOException e) {
+            System.err.println(e);
+            template = null;
+        }
+
+        List<String> parameters = templateService.getParameters(template);
+        JSONArray arr = new JSONArray();
+        if (parameters != null) {
+            for (String param : parameters) {
+                arr.put(param);
             }
-            
-            List<String> parameters = templateService.getParameters(template);
-            JSONArray arr = new JSONArray();
-            for (String param : parameters){
-            arr.put(param);
-            }
-            
-            
-            JSONObject obj = new JSONObject();
-            obj.put("text", template);
-            obj.put("parameters", arr);
-            
-            response.setContentType("application/json");
+        }
+
+        JSONObject obj = new JSONObject();
+        obj.put("text", template);
+        obj.put("parameters", arr);
+
+        response.setContentType("application/json");
         response.getWriter().print(obj.toString());
     }
 

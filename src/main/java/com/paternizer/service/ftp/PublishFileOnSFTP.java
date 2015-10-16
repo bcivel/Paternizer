@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package com.paternizer.service;
+package com.paternizer.service.ftp;
 
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelSftp;

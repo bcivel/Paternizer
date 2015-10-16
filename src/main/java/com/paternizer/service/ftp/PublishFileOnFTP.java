@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.paternizer.service;
+package com.paternizer.service.ftp;
 
 import java.io.File;
 import java.io.FileInputStream;

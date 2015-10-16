@@ -44,6 +44,30 @@
         <servlet-name>GetFileWithParameters</servlet-name>
         <servlet-class>com.paternizer.servlet.GetFileWithParameters</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>SendFromFTPtoFTP</servlet-name>
+        <servlet-class>com.paternizer.servlet.SendFromFTPtoFTP</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>SendFromESBToMaxxing</servlet-name>
+        <servlet-class>com.paternizer.servlet.SendFromESBToMaxxing</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>InjectFile</servlet-name>
+        <servlet-class>com.paternizer.servlet.InjectFile</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>GenerateXmlFileFromTemplate</servlet-name>
+        <servlet-class>com.paternizer.servlet.GenerateXmlFileFromTemplate</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>DeleteFile</servlet-name>
+        <servlet-class>com.paternizer.servlet.DeleteFile</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>CallWS</servlet-name>
+        <servlet-class>com.paternizer.servlet.CallWS</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>GenerateFile</servlet-name>
         <url-pattern>/GenerateFile</url-pattern>
@@ -84,9 +108,37 @@
         <servlet-name>GetFileWithParameters</servlet-name>
         <url-pattern>/GetFileWithParameters</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>SendFromFTPtoFTP</servlet-name>
+        <url-pattern>/SendFromFTPtoFTP</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>SendFromESBToMaxxing</servlet-name>
+        <url-pattern>/SendFromESBToMaxxing</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>InjectFile</servlet-name>
+        <url-pattern>/InjectFile</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>GenerateXmlFileFromTemplate</servlet-name>
+        <url-pattern>/GenerateXmlFileFromTemplate</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DeleteFile</servlet-name>
+        <url-pattern>/DeleteFile</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CallWS</servlet-name>
+        <url-pattern>/CallWS</url-pattern>
+    </servlet-mapping>
     <session-config>
         <session-timeout>
             30
         </session-timeout>
     </session-config>
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>/WEB-INF/applicationContext.xml</param-value>
+    </context-param>
 </web-app>

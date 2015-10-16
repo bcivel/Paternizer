@@ -7,7 +7,7 @@ package com.paternizer.servlet;
 
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
-import com.paternizer.service.GetFileListFromFTP;
+import com.paternizer.service.ftp.GetFileListFromFTP;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -39,33 +39,28 @@ public class GetFileListFromFtp extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
-        
-        try{
-        String sftp = request.getParameter("sftp");
-        String host = request.getParameter("host");
-        String port = request.getParameter("port");
-        String user = request.getParameter("user");
-        String password = request.getParameter("password");
-        String folder = request.getParameter("folder");
-        String fileName = request.getParameter("fileName");
-        List<String> result = new ArrayList();
-        JSONArray data = new JSONArray();
-        
-        if (sftp != null) {
-            GetFileListFromFTP getFromFTP = new GetFileListFromFTP();
-            result = getFromFTP.GetFileListFromSFTP(host, port, user, password, folder);
-        } else {
-            GetFileListFromFTP getFromFTP = new GetFileListFromFTP();
-            data = getFromFTP.getFileList(host, port, user, password, folder, fileName);
-        }
-        
 
-//        for (String res : result) {
-//            data.put(res);
-//        }
-        response.setContentType("application/json");
-        response.getWriter().print(data.toString());
-        
+        try {
+            String sftp = request.getParameter("sftp");
+            String host = request.getParameter("host");
+            String port = request.getParameter("port");
+            String user = request.getParameter("user");
+            String password = request.getParameter("password");
+            String folder = request.getParameter("folder");
+            String fileName = request.getParameter("fileName");
+            JSONArray data = new JSONArray();
+
+            if (sftp != null) {
+                GetFileListFromFTP getFromFTP = new GetFileListFromFTP();
+                data = getFromFTP.GetFileListFromSFTP(host, port, user, password, folder);
+            } else {
+                GetFileListFromFTP getFromFTP = new GetFileListFromFTP();
+                data = getFromFTP.getFileList(host, port, user, password, folder, fileName);
+            }
+
+            response.setContentType("application/json");
+            response.getWriter().print(data.toString());
+
         } catch (JSchException ex) {
             Logger.getLogger(GetFileListFromFtp.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SftpException ex) {
@@ -75,18 +70,17 @@ public class GetFileListFromFtp extends HttpServlet {
         }
     }
 
-
 // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-/**
- * Handles the HTTP <code>GET</code> method.
- *
- * @param request servlet request
- * @param response servlet response
- * @throws ServletException if a servlet-specific error occurs
- * @throws IOException if an I/O error occurs
- */
-@Override
-        protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    /**
+     * Handles the HTTP <code>GET</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
     }
@@ -100,7 +94,7 @@ public class GetFileListFromFtp extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-        protected void doPost(HttpServletRequest request, HttpServletResponse response)
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
     }
@@ -111,7 +105,7 @@ public class GetFileListFromFtp extends HttpServlet {
      * @return a String containing servlet description
      */
     @Override
-        public String getServletInfo() {
+    public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
 

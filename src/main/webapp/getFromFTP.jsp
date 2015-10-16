@@ -62,7 +62,7 @@
                         function(data) {
                             $("#resultFile").empty();
                             var doc = document.createElement("xmp");
-                            doc.innerHTML = data;
+                            doc.innerHTML = data.content;
                             document.getElementById("resultFile").appendChild(doc);
                         },
                         function(xhr) {

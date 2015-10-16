@@ -69,20 +69,15 @@
 //            );
 //        
         $(document).ready(function() {
-            $('#uploadTemplateDiv').load("include/uploadTemplate.html");
-            $('#addEntryModal').on('hidden.bs.modal', {extra: "#addEntryModal"}, buttonCloseHandler);
             $('#jstree_demo_div').on('changed.jstree', function(e, data) {
                 var i, j, r = [];
                 for (i = 0, j = data.selected.length; i < j; i++) {
                     r.push(data.instance.get_node(data.selected[i]).text);
                 }
-                var urlFile = data.selected[0];
-                loadJSON('GetFileWithParameters', "&fileURL=" + urlFile,
+                loadJSON('GetFileWithParameters', "&fileURL=" + data.selected[0],
                         function(data) {
                             $("#templateContent").empty();
                             $("#templateContent").text(data.text);
-                            $("#fileURL").empty();
-                            $("#fileURL").val(urlFile);
                             $("#parameterList").empty();
                             if (data.parameters!==null){
                                 for(var d in data.parameters){
@@ -129,8 +124,6 @@
                     $(".custom-menu").hide(100);
                 }
             });
-            
-            
 
 
 // If the menu element is clicked
@@ -141,7 +134,8 @@
 
                     // A case for each action. Your actions here
                     case "addfile":
-                        $('#addEntryModal').modal('show');
+                        alert("first");
+                        $('#event_result').load("include/uploadTemplate.html");
                         break;
                     case "second":
                         alert("second");
@@ -156,16 +150,6 @@
             });
 
         });
-        
-        function buttonCloseHandler(event) {
-    var modalID = event.data.extra;
-    // reset form values
-    $(modalID + " " + modalID + "Form")[0].reset();
-    // remove all errors on the form fields
-    $(this).find('div.has-error').removeClass("has-error");
-    // clear the response messages of the modal
-    clearResponseMessage($(modalID));
-}
 
 
     </script> 
@@ -226,7 +210,7 @@
                     <div class="panel-body collapse in" id="parametersPart" style="overflow:auto">
                         <form action="GenerateFile">
                             <div class="form-group">
-                                <label class="label label-primary" for="fileURL">template URL : </label><input class="form-control input-normal" id="fileURL" name="fileURL" type="text">
+                                <label class="label label-primary" for="fileURL">template URL : </label><input class="form-control input-normal" id="fileURL" name="fileURL" type="text" value="<%=request.getParameter("fileURL")%>">
                             </div>
                             <div class="form-group">
                                 <label class="label label-primary" for="fileName">file name : </label><input class="form-control input-normal" id="fileName" name="fileName" type="text">
@@ -251,11 +235,11 @@
 
         </div>
         <div id="event_result"></div>
-<div id="uploadTemplateDiv"></div>
+
         <ul class='custom-menu'>
-            <li data-action="createrepo">Create Repository</li>
-            <li data-action="addfile">Upload New File</li>
-            <li data-action="delete">Delete</li>
+            <li data-action="addfile">Upload File</li>
+            <li data-action="second">Second thing</li>
+            <li data-action="third">Third thing</li>
         </ul>
     </body>
 </html>

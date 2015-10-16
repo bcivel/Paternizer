@@ -8,8 +8,8 @@ package com.paternizer.servlet;
 
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
-import com.paternizer.service.PublishFileOnFTP;
-import com.paternizer.service.PublishFileOnSFTP;
+import com.paternizer.service.ftp.PublishFileOnFTP;
+import com.paternizer.service.ftp.PublishFileOnSFTP;
 import com.paternizer.service.PublishOnTibcoJmsQueue;
 import java.io.File;
 import java.io.FileOutputStream;

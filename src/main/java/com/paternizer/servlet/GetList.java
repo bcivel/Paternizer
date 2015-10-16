@@ -54,35 +54,35 @@ public class GetList extends HttpServlet {
 
     private JSONArray getListOfItem(File folder, JSONArray data, String parent) throws IOException {
         System.out.print(folder.getAbsolutePath());
-        
+
         File[] listOfFiles = folder.listFiles();
-        if (listOfFiles!=null){
-        for (int i = 0; i < listOfFiles.length; i++) {
-            JSONObject obj = new JSONObject();
-            if (listOfFiles[i].isFile()) {
-                obj.put("type", "file");
-                obj.put("id", folder.getAbsolutePath()+"/"+listOfFiles[i].getName());
-                obj.put("parent", parent);
-                obj.put("text", listOfFiles[i].getName());
-                obj.put("folder", folder.getAbsolutePath());
-                obj.put("name", listOfFiles[i].getName());
-                obj.put("icon", "jstree-file");
-            } else if (listOfFiles[i].isDirectory()) {
-                obj.put("type", "folder");
-                obj.put("id", folder.getAbsolutePath()+"/"+listOfFiles[i].getName());
-                obj.put("parent", parent);
-                obj.put("text", listOfFiles[i].getName());
-                obj.put("folder", folder.getAbsolutePath());
-                obj.put("name", listOfFiles[i].getName());
-                getListOfItem(new File(folder.getAbsolutePath()+"/"+listOfFiles[i].getName()), data,folder.getAbsolutePath()+"/"+listOfFiles[i].getName());
+        if (listOfFiles != null) {
+            for (int i = 0; i < listOfFiles.length; i++) {
+                JSONObject obj = new JSONObject();
+                if (listOfFiles[i].isFile()) {
+                    obj.put("type", "file");
+                    obj.put("id", folder.getAbsolutePath() + "/" + listOfFiles[i].getName());
+                    obj.put("parent", parent);
+                    obj.put("text", listOfFiles[i].getName());
+                    obj.put("folder", folder.getAbsolutePath());
+                    obj.put("name", listOfFiles[i].getName());
+                    obj.put("icon", "jstree-file");
+                } else if (listOfFiles[i].isDirectory()) {
+                    obj.put("type", "folder");
+                    obj.put("id", folder.getAbsolutePath() + "/" + listOfFiles[i].getName());
+                    obj.put("parent", parent);
+                    obj.put("text", listOfFiles[i].getName());
+                    obj.put("folder", folder.getAbsolutePath());
+                    obj.put("name", listOfFiles[i].getName());
+                    getListOfItem(new File(folder.getAbsolutePath() + "/" + listOfFiles[i].getName()), data, folder.getAbsolutePath() + "/" + listOfFiles[i].getName());
+                }
+                data.put(obj);
             }
-            data.put(obj);
-        }
         }
         return data;
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+        // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      *
