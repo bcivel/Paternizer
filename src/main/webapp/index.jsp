@@ -49,6 +49,56 @@
         }
     </style>
     <script>
+        function loadTree() {
+            //$('#jstree_demo_div').children().empty();
+            $('#jstree_demo_div').on('changed.jstree', function(e, data) {
+                var i, j, r = [];
+                for (i = 0, j = data.selected.length; i < j; i++) {
+                    r.push(data.instance.get_node(data.selected[i]).text);
+                }
+                var urlFile = data.selected[0];
+                loadJSON('GetFileWithParameters', "&fileURL=" + urlFile,
+                        function(data) {
+                            $("#templateContent").empty();
+                            $("#templateContent").text(data.text);
+                            $("#fileURL").empty();
+                            $("#fileURL").val(urlFile);
+                            $("#parameterList").empty();
+                            if (data.parameters !== null) {
+                                for (var d in data.parameters) {
+                                    $("#parameterList").append("<div class='form-group'></div>")
+                                            .append("<label class='label label-primary' for='" + data.parameters[d] + "'>" + data.parameters[d] + ":</label>")
+                                            .append("<input class='form-control input-normal' id='" + data.parameters[d] + "' name='" + data.parameters[d] + "' type='text'>");
+                                }
+                            }
+//                            
+                        });
+                //window.location.replace("?fileURL=<%= FileConstants.DOCUMENT_URL%>templates/" + r.join(', '));
+                $('#event_result').html('Selected: ' + r.join(', '));
+            }).jstree({
+                'core': {
+                    'data': {
+                        'url': 'GetList?type=',
+                        'data': function(node) {
+                            return {'id': node.id, 'data-id': node.dataid};
+                        }
+                    }
+                }})
+//                    .bind("hover_node.jstree", function(e, data)
+//            {
+//
+//var escpedId = data.node.id.replace('.', '\.');
+//escpedId = data.node.id.replace(':', '\:');
+//escpedId = data.node.id.replace('/', '\/');
+//escpedId = data.node.id.replace('\\', '\\\\');
+//console.log('[id="'+escpedId+'"]');  
+//console.log($('[id="'+escpedId+'"]'));  
+//            $('[id="'+escpedId+'"]').attr("title", data.node.original.text);
+//            $('[id="'+escpedId+'"]').tooltip();
+//            });
+        }
+    </script>
+    <script>
 //            loadJSON('GetList', "&type=templates",
 //                    function(data) {
 //                        for (var i = 0; i < data.length; i++) {
@@ -71,54 +121,22 @@
         $(document).ready(function() {
             $('#uploadTemplateDiv').load("include/uploadTemplate.html");
             $('#addEntryModal').on('hidden.bs.modal', {extra: "#addEntryModal"}, buttonCloseHandler);
-            $('#jstree_demo_div').on('changed.jstree', function(e, data) {
-                var i, j, r = [];
-                for (i = 0, j = data.selected.length; i < j; i++) {
-                    r.push(data.instance.get_node(data.selected[i]).text);
-                }
-                var urlFile = data.selected[0];
-                loadJSON('GetFileWithParameters', "&fileURL=" + urlFile,
-                        function(data) {
-                            $("#templateContent").empty();
-                            $("#templateContent").text(data.text);
-                            $("#fileURL").empty();
-                            $("#fileURL").val(urlFile);
-                            $("#parameterList").empty();
-                            if (data.parameters!==null){
-                                for(var d in data.parameters){
-                                $("#parameterList").append("<div class='form-group'></div>")
-                                        .append("<label class='label label-primary' for='"+ data.parameters[d] +"'>"+data.parameters[d]+":</label>")
-                                        .append("<input class='form-control input-normal' id='"+data.parameters[d]+"' name='"+data.parameters[d]+"' type='text'>");
-                            }
-                            }
-//                            
-                        });
-                //window.location.replace("?fileURL=<%= FileConstants.DOCUMENT_URL%>templates/" + r.join(', '));
-                $('#event_result').html('Selected: ' + r.join(', '));
-            }).jstree({
-                'core': {
-                    'data': {
-                        'url': 'GetList?type=',
-                        'data': function(node) {
-                            return {'id': node.id};
-                        }
-                    }
-                }});
-
+            loadTree();
             $("#jstree_demo_div").bind("contextmenu", function(event) {
                 // Avoid the real one
+                console.log($(event.target.parentNode).parent().parent());
                 event.preventDefault();
-
+                $("#deleteFileButton").attr("data-file", event.target.parentNode.id);
+                $("#addFileButton").attr("data-parent", event.target.parentNode.id);
+                console.log(event.target.parentNode);
                 // Show contextmenu
                 $(".custom-menu").finish().toggle(100).
                         // In the right position (the mouse)
                         css({
-                            top: event.pageY + "px",
+                            top: event.pageY - 100 + "px",
                             left: event.pageX + "px"
                         });
             });
-
-
 // If the document is clicked somewhere
             $(document).bind("mousedown", function(e) {
 
@@ -129,10 +147,6 @@
                     $(".custom-menu").hide(100);
                 }
             });
-            
-            
-
-
 // If the menu element is clicked
             $(".custom-menu li").click(function() {
 
@@ -143,8 +157,13 @@
                     case "addfile":
                         $('#addEntryModal').modal('show');
                         break;
-                    case "second":
-                        alert("second");
+                    case "delete":
+                        var file = $(this);
+                        $.get("DeleteFile", "&filePath=" + file.attr("data-file")).done(
+                                function() {
+                                    $('#jstree_demo_div').jstree(true).refresh();
+                                }
+                        )
                         break;
                     case "third":
                         alert("third");
@@ -154,18 +173,16 @@
                 // Hide it AFTER the action was triggered
                 $(".custom-menu").hide(100);
             });
-
         });
-        
         function buttonCloseHandler(event) {
-    var modalID = event.data.extra;
-    // reset form values
-    $(modalID + " " + modalID + "Form")[0].reset();
-    // remove all errors on the form fields
-    $(this).find('div.has-error').removeClass("has-error");
-    // clear the response messages of the modal
-    clearResponseMessage($(modalID));
-}
+            var modalID = event.data.extra;
+            // reset form values
+            $(modalID + " " + modalID + "Form")[0].reset();
+            // remove all errors on the form fields
+            $(this).find('div.has-error').removeClass("has-error");
+            // clear the response messages of the modal
+            clearResponseMessage($(modalID));
+        }
 
 
     </script> 
@@ -193,7 +210,7 @@
             <div class="panel panel-default" style="overflow:auto">
                 <div class="panel-heading">Select a Template :</div>
                 <div id="jstree_demo_div">
-                    <ul style="height: 600px" id="templateUl" ></ul>
+                    <ul style="height: 600px" id="templateUl"></ul>
                 </div>
             </div>  
         </div>
@@ -251,11 +268,11 @@
 
         </div>
         <div id="event_result"></div>
-<div id="uploadTemplateDiv"></div>
+        <div id="uploadTemplateDiv"></div>
         <ul class='custom-menu'>
             <li data-action="createrepo">Create Repository</li>
-            <li data-action="addfile">Upload New File</li>
-            <li data-action="delete">Delete</li>
+            <li id="addFileButton" data-action="addfile" data-parent="/">Upload New File</li>
+            <li id="deleteFileButton" data-action="delete" data-file="/toto">Delete</li>
         </ul>
     </body>
 </html>

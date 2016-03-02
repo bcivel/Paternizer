@@ -17,22 +17,22 @@
 
     <repositories>
         <repository>
-                <id>central</id>
-                <name>Maven Repository Switchboard</name>
-                <layout>default</layout>
-                <url>http://repo1.maven.org/maven2</url>
-                <snapshots>
-                        <enabled>false</enabled>
-                </snapshots>
+            <id>central</id>
+            <name>Maven Repository Switchboard</name>
+            <layout>default</layout>
+            <url>http://repo1.maven.org/maven2</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
         </repository>
         <repository>
-                <id>frascati-repo.inria.fr</id>
-                <name>Maven Repository frascati-repo.inria.fr</name>
-                <layout>default</layout>
-                <url>https://frascati-repo.inria.fr/nexus/</url>
-                <snapshots>
-                        <enabled>false</enabled>
-                </snapshots>
+            <id>frascati-repo.inria.fr</id>
+            <name>Maven Repository frascati-repo.inria.fr</name>
+            <layout>default</layout>
+            <url>https://frascati-repo.inria.fr/nexus/</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
         </repository>
     </repositories>
 
@@ -87,25 +87,45 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-	<groupId>org.json</groupId>
-	<artifactId>json</artifactId>
-	<version>20140107</version>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20140107</version>
             <type>jar</type>
         </dependency>
         <dependency>
-                <groupId>org.apache.sshd</groupId>
-                <artifactId>sshd-core</artifactId>
-                <version>0.11.0</version>
+            <groupId>org.apache.sshd</groupId>
+            <artifactId>sshd-core</artifactId>
+            <version>0.11.0</version>
         </dependency>
         <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-vfs2</artifactId>
-                <version>2.0</version>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-vfs2</artifactId>
+            <version>2.0</version>
         </dependency>
         <dependency>
-                <groupId>com.jcraft</groupId>
-                <artifactId>jsch</artifactId>
-                <version>0.1.51</version>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-email</artifactId>
+            <version>1.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.jcraft</groupId>
+            <artifactId>jsch</artifactId>
+            <version>0.1.51</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>1.8.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-compress</artifactId>
+            <version>1.10</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.ws</groupId>
+            <artifactId>jaxws-rt</artifactId>
+            <version>2.2.5</version>
         </dependency>
         <dependency>    
             <groupId>tibco</groupId>    

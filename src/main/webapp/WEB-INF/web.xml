@@ -68,6 +68,26 @@
         <servlet-name>CallWS</servlet-name>
         <servlet-class>com.paternizer.servlet.CallWS</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>SendMail</servlet-name>
+        <servlet-class>com.paternizer.servlet.SendMail</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AddToArchive</servlet-name>
+        <servlet-class>com.paternizer.servlet.AddToArchive</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ConvertString</servlet-name>
+        <servlet-class>com.paternizer.servlet.ConvertString</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>SendMailWS</servlet-name>
+        <servlet-class>com.paternizer.service.email.SendMailWS</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>GenerateFileWS</servlet-name>
+        <servlet-class>com.paternizer.service.file.GenerateFileWS</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>GenerateFile</servlet-name>
         <url-pattern>/GenerateFile</url-pattern>
@@ -129,8 +149,28 @@
         <url-pattern>/DeleteFile</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
+        <servlet-name>SendMailWS</servlet-name>
+        <url-pattern>/SendMailWS</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
         <servlet-name>CallWS</servlet-name>
         <url-pattern>/CallWS</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>SendMail</servlet-name>
+        <url-pattern>/SendMail</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AddToArchive</servlet-name>
+        <url-pattern>/AddToArchive</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ConvertString</servlet-name>
+        <url-pattern>/ConvertString</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>GenerateFileWS</servlet-name>
+        <url-pattern>/GenerateFileWS</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

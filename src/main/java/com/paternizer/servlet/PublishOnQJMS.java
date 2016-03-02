@@ -52,24 +52,25 @@ public class PublishOnQJMS extends HttpServlet {
         String user = request.getParameter("user");
         String password = request.getParameter("password");
         String queueName = request.getParameter("queueName");
-
         if (request.getParameterValues("fileName") != null) {
             String[] fileNames = request.getParameterValues("fileName");
             List<File> fileList = new ArrayList<File>();
             for (int i = 0; i < fileNames.length; i++) {
                 try {
                     String fileName = fileNames[i];
+                    out.println(fileNames[i]);
                     File file = new File(fileName);
                     fileList.add(file);
+                    out.println(fileList.size());
                 } finally {
-                    out.close();
+                    //out.close();
                 }
 
             }
             for (File f : fileList){
             String str = FileUtils.readFileToString(f, "UTF-8");
             PublishOnTibcoJmsQueue publishOnTibcoJmsQueue = new PublishOnTibcoJmsQueue();
-            publishOnTibcoJmsQueue.sendXmlByJms(host, port, user, port, queueName, str);
+            publishOnTibcoJmsQueue.sendXmlByJms(host, port, user, password, queueName, str);
             out.println(" Message : " + f.getName() + " Sent<br>");
             }
                         

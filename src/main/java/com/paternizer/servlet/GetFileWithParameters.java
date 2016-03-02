@@ -39,6 +39,7 @@ public class GetFileWithParameters extends HttpServlet {
         PrintWriter out = response.getWriter();
         String template;
         TemplateService templateService = new TemplateService();
+        if (!"undefined".equals(request.getParameter("fileURL"))){
         try {
             URL templateURL = new URL("file:///" + request.getParameter("fileURL"));
             template = templateService.getFile(templateURL);
@@ -64,6 +65,7 @@ public class GetFileWithParameters extends HttpServlet {
 
         response.setContentType("application/json");
         response.getWriter().print(obj.toString());
+        }
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

@@ -3,24 +3,27 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+
 package com.paternizer.servlet;
 
-import com.paternizer.constants.FileConstants;
+import com.paternizer.service.zip.Compress;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 /**
  *
  * @author bcivel
  */
-public class GetList extends HttpServlet {
+public class AddToArchive extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -35,55 +38,29 @@ public class GetList extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
+        String outputFormat = request.getParameter("outputFormat");
+        String[] fileUrl = request.getParameterValues("fileUrl");
+        String outputName = request.getParameter("outputName");
+        if (outputFormat == null || fileUrl == null || outputName == null) {
+                out.println("This servlet is used to compress files\n");
+                out.println("Parameters needed :\n");
+                out.println("outputFormat: zip, gz\n");
+                out.println("fileUrl: The list of the URL to the file to add to archive\n");
+                out.println("outputName: The name of the output package\n");
+            }
         try {
-
-            String type = request.getParameter("type");
-
-            JSONArray data = new JSONArray();
-            File folder = new File(FileConstants.DOCUMENT_FOLDER + type + "/");
-            String parent = "#";
-            data = getListOfItem(folder, data, parent);
-
-            response.setContentType("application/json");
-            response.getWriter().print(data.toString());
-
+            
+            Compress comp = new Compress();
+            String result = comp.add_files_to_an_archive(fileUrl, outputFormat, outputName);
+            out.println(result);
+        } catch (Exception ex) {
+            Logger.getLogger(AddToArchive.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             out.close();
         }
     }
 
-    private JSONArray getListOfItem(File folder, JSONArray data, String parent) throws IOException {
-        
-        File[] listOfFiles = folder.listFiles();
-        if (listOfFiles != null) {
-            for (int i = 0; i < listOfFiles.length; i++) {
-                JSONObject obj = new JSONObject();
-                if (listOfFiles[i].isFile()) {
-                    obj.put("type", "file");
-                    obj.put("id", folder.getAbsolutePath() + "/" + listOfFiles[i].getName());
-                    obj.put("parent", parent);
-                    obj.put("text", listOfFiles[i].getName());
-                    obj.put("folder", folder.getAbsolutePath());
-                    obj.put("name", listOfFiles[i].getName());
-                    obj.put("dataid", i);
-                    obj.put("icon", "jstree-file");
-                } else if (listOfFiles[i].isDirectory()) {
-                    obj.put("type", "folder");
-                    obj.put("id", folder.getAbsolutePath() + "/" + listOfFiles[i].getName());
-                    obj.put("parent", parent);
-                    obj.put("text", listOfFiles[i].getName());
-                    obj.put("dataid", i);
-                    obj.put("folder", folder.getAbsolutePath());
-                    obj.put("name", listOfFiles[i].getName());
-                    getListOfItem(new File(folder.getAbsolutePath() + "/" + listOfFiles[i].getName()), data, folder.getAbsolutePath() + "/" + listOfFiles[i].getName());
-                }
-                data.put(obj);
-            }
-        }
-        return data;
-    }
-
-        // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      *

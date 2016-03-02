@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.paternizer.servlet;
 
 import com.paternizer.service.FileInject;
@@ -15,14 +14,10 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.activation.DataHandler;
-import javax.activation.FileDataSource;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPConnection;
@@ -31,7 +26,7 @@ import javax.xml.soap.SOAPConstants;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 import org.apache.commons.io.FileUtils;
-import org.xml.sax.SAXException;
+import org.apache.mina.util.Base64;
 
 /**
  *
@@ -48,73 +43,87 @@ public class CallWS extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+   protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter pw = response.getWriter();
-        
+
         String result = null;
         ByteArrayOutputStream out = null;
         String envelopeFilePath = request.getParameter("envelopeFile");
         String method = request.getParameter("method");
         String servicePath = request.getParameter("servicePath");
-        File envelopeFile = new File(envelopeFilePath);
-        String envelope = FileUtils.readFileToString(envelopeFile, "UTF-8");
-        System.out.println(envelope);
-        System.out.println(servicePath);
-        System.out.println(method);
-        
-        SOAPConnectionFactory soapConnectionFactory;
-        SOAPConnection soapConnection = null;
-        try {
-            //Initialize SOAP Connection
-            soapConnectionFactory = SOAPConnectionFactory.newInstance();
-            soapConnection = soapConnectionFactory.createConnection();
+        String username = request.getParameter("username");
+        String password = request.getParameter("password");
 
-            // Create SOAP Request
-            MimeHeaders headers = new MimeHeaders();
-        headers.addHeader("SOAPAction", method);
-        headers.addHeader("Content-Type", SOAPConstants.SOAP_1_1_CONTENT_TYPE);
+        // WS-Security header values
+        if (envelopeFilePath == null || method == null || servicePath == null) {
+            pw.println("This servlet is used to call WebService\n");
+            pw.println("Parameters needed :\n");
+            pw.println("envelopeFile: The Path of the envelope");
+            pw.println("method: The nameof the method to call");
+            pw.println("servicePath: WSDL");
+        } else {
+            SOAPConnectionFactory soapConnectionFactory;
+            SOAPConnection soapConnection = null;
+            try {
+                File envelopeFile = new File(envelopeFilePath);
+                String envelope = FileUtils.readFileToString(envelopeFile, "UTF-8");
+                //Initialize SOAP Connection
+                soapConnectionFactory = SOAPConnectionFactory.newInstance();
+                soapConnection = soapConnectionFactory.createConnection();
 
-        InputStream inputStream = new ByteArrayInputStream(envelope.getBytes("UTF-8"));
-        MessageFactory messageFactory = MessageFactory.newInstance(SOAPConstants.DYNAMIC_SOAP_PROTOCOL);
-           SOAPMessage input = messageFactory.createMessage(headers, inputStream);
-            
-            // Call the WS
-            SOAPMessage soapResponse = soapConnection.call(input, servicePath);
-            out = new ByteArrayOutputStream();
+                // Create SOAP Request
+                MimeHeaders headers = new MimeHeaders();
+                headers.addHeader("SOAPAction", method);
+                headers.addHeader("Content-Type", SOAPConstants.SOAP_1_1_CONTENT_TYPE);
+                
+                if (username != null && password != null){
+                String loginPassword = username + ":" + password;
+                byte[] encodedString = Base64.encodeBase64(loginPassword.getBytes());
+                String str = new String(encodedString, "UTF-8");
+                headers.addHeader("Authorization", "Basic " + str);
+                }
+                
+                InputStream inputStream = new ByteArrayInputStream(envelope.getBytes("UTF-8"));
+                MessageFactory messageFactory = MessageFactory.newInstance();
+                SOAPMessage input = messageFactory.createMessage(headers, inputStream);
 
-            // Store the response in memory (Using the persistent ExecutionSOAPResponse object)
-            soapResponse.writeTo(out);
-            result = out.toString();
+                // Call the WS
+                SOAPMessage soapResponse = soapConnection.call(input, servicePath);
+                out = new ByteArrayOutputStream();
+                
+                // Store the response in memory (Using the persistent ExecutionSOAPResponse object)
+                soapResponse.writeTo(out);
+                result = out.toString();
 
-            pw.print(result);
-            
-            //Log out
-            Logger.getLogger(FileInject.class.getName()).log(Level.INFO, null, "CALL_RESPONSE : " + result);
-            
-            //Delete File
+                pw.print(result);
+
+                //Log out
+                Logger.getLogger(FileInject.class.getName()).log(Level.INFO, null, "CALL_RESPONSE : " + result);
+
+                //Delete File
 //            File file = new File(attachmentUrl);
 //            file.delete();
-
-        } catch (SOAPException e) {
-            System.out.println(e);
-        } catch (IOException e) {
-            System.out.println(e);
-        } catch (Exception ex) {
-            Logger.getLogger(FileInject.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            try {
-                if (soapConnection != null) {
-                    soapConnection.close();
+            } catch (SOAPException e) {
+                System.out.println(e);
+            } catch (IOException e) {
+                System.out.println(e);
+            } catch (Exception ex) {
+                Logger.getLogger(FileInject.class.getName()).log(Level.SEVERE, null, ex);
+            } finally {
+                try {
+                    if (soapConnection != null) {
+                        soapConnection.close();
+                    }
+                    if (out != null) {
+                        out.close();
+                    }
+                } catch (SOAPException ex) {
+                    Logger.getLogger(FileInject.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+                } catch (IOException ex) {
+                    Logger.getLogger(FileInject.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
                 }
-                if (out != null) {
-                    out.close();
-                }
-            } catch (SOAPException ex) {
-                Logger.getLogger(FileInject.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-            } catch (IOException ex) {
-                Logger.getLogger(FileInject.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
             }
         }
 

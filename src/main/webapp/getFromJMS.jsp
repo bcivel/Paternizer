@@ -1,3 +1,9 @@
+<%@page import="org.json.JSONObject"%>
+<%@page import="org.json.JSONArray"%>
+<%@page import="java.util.Date"%>
+<%@page import="java.io.FileNotFoundException"%>
+<%@page import="java.io.InputStream"%>
+<%@page import="java.util.Properties"%>
 <%@page import="java.util.List"%>
 <%@page import="java.io.IOException"%>
 <%@page import="java.net.MalformedURLException"%>
@@ -55,7 +61,7 @@
 //                        }
 //                );
 
-$('#jstree_demo_div2').on('changed.jstree', function(e, data) {
+                $('#jstree_demo_div2').on('changed.jstree', function(e, data) {
                     var i, j, r = [], path;
                     for (i = 0, j = data.selected.length; i < j; i++) {
                         r.push(data.instance.get_node(data.selected[i]).text);
@@ -66,7 +72,7 @@ $('#jstree_demo_div2').on('changed.jstree', function(e, data) {
                 }).jstree({
                     'core': {
                         'data': {
-                            'url': 'ReadJmsQueue?host=' + $("#host").val() + '&port=' + $("#port").val() + '&user=' + $("#user").val() + '&password=' + $("#password").val() + '&queueName=' + $("#queueName").val() ,
+                            'url': 'ReadJmsQueue?host=' + $("#host").val() + '&port=' + $("#port").val() + '&user=' + $("#user").val() + '&password=' + $("#password").val() + '&queueName=' + $("#queueName").val(),
                             'data': function(node) {
                                 return {'id': node.id};
                             }
@@ -79,8 +85,8 @@ $('#jstree_demo_div2').on('changed.jstree', function(e, data) {
                 $("#resultFile").empty();
                 var div = document.createElement("xmp");
                 div.innerHTML = data;
-                        $("#resultFile").append(div);
-                     
+                $("#resultFile").append(div);
+
             }
         </script> 
         <%@ include file="include/header.jsp"%>
@@ -115,17 +121,68 @@ $('#jstree_demo_div2').on('changed.jstree', function(e, data) {
             } else {
                 queueName = new String("");
             }
+
+            Properties prop = new Properties();
+            String propFileName = "jms.properties";
+
+            InputStream inputStream = getClass().getClassLoader().getResourceAsStream(propFileName);
+
+            if (inputStream != null) {
+                prop.load(inputStream);
+            } else {
+                throw new FileNotFoundException("property file '" + propFileName + "' not found in the classpath");
+            }
+
+            // get the property value and print it out
+            JSONArray connectionStrings = new JSONArray();
+            String[] connection = prop.getProperty("jms.connection").split(",");
+            for (String c : connection) {
+                JSONObject connectionString = new JSONObject();
+                connectionString.put("name", prop.getProperty("jms." + c + ".title"));
+                connectionString.put("host", prop.getProperty("jms." + c + ".host"));
+                connectionString.put("port", prop.getProperty("jms." + c + ".port"));
+                connectionString.put("user", prop.getProperty("jms." + c + ".user"));
+                connectionString.put("pass", prop.getProperty("jms." + c + ".pass"));
+                connectionString.put("defaultFolder", prop.getProperty("jms." + c + ".defaultFolder"));
+                connectionStrings.put(connectionString);
+            }
+
         %>
+        <script>function feedJMSInformation(element){
+            $( "#selectAQueue option:selected" ).text();
+        $("#host").val($( "#selectAQueue option:selected" ).attr("data-host"));
+        $("#port").val($( "#selectAQueue option:selected" ).attr("data-port"));
+        $("#user").val($( "#selectAQueue option:selected" ).attr("data-user"));
+        $("#password").val($( "#selectAQueue option:selected" ).attr("data-pass"));
+        $("#queueName").val($( "#selectAQueue option:selected" ).attr("data-defaultFolder"));
+        }
+        </script>
         <input hidden="hidden" id="defHost" value="<%=host%>">
         <input hidden="hidden" id="defPort" value="<%=port%>">
         <input hidden="hidden" id="defUser" value="<%=user%>">
         <input hidden="hidden" id="defPass" value="<%=password%>">
         <input hidden="hidden" id="defQueueName" value="<%=queueName%>">
         <div class="col-sm-12">
-            <div class="panel panel-primary">
-                <div class="panel-heading">QueueJMS Information
-                <button class="btn btn-success" onclick="loadMessagesFromJMS()">Get Messages</button></div>
-                <div class="panel-body">
+            <div class="panel panel-default">
+                <div class="panel-heading card">
+                    <label>Connect to QueueJMS</label>
+                    <a data-toggle="collapse" data-target="#functionChart">
+                        <span class="toggle glyphicon glyphicon-chevron-right pull-right"></span>
+                    </a>
+                    <select id="selectAQueue" onchange="feedJMSInformation(this)">
+                        <option>Select a Queue</option>
+                        <%for (int a = 0; a < connectionStrings.length(); a++) {
+                        JSONObject j = (JSONObject) connectionStrings.get(a); %>
+                        <option data-host="<%=j.getString("host")%>"
+                                data-port="<%=j.getString("port")%>"
+                                data-user="<%=j.getString("user")%>"
+                                data-pass="<%=j.getString("pass")%>"
+                                data-defaultFolder="<%=j.getString("defaultFolder")%>"><%=j.getString("name")%></option>
+                        <%}%>
+                    </select>
+                    <button class="btn btn-success" onclick="loadMessagesFromJMS()">Connect</button>
+                </div>
+                <div class="panel-body collapse" id="functionChart" >
                     <div class="form-group col-sm-2">
                         <label class="label label-primary" for="host">FTP Host</label>
                         <input type="text" class="form-control input-normal" id="host" name="host" onBlur="recordCookie('host', 'PaternizerJMSHost')"/>
@@ -146,13 +203,14 @@ $('#jstree_demo_div2').on('changed.jstree', function(e, data) {
                         <label class="label label-primary" for="foler">Queue Name</label>
                         <input type="text" class="form-control input-normal" id="queueName" name="queueName" onBlur="recordCookie('queueName', 'PaternizerJMSQueueName')"/>
                     </div>
-                    
-                </div></div>
+
+                </div>
+            </div>
         </div>
         <div class="col-sm-3">
             <div class="panel panel-primary" style="overflow:auto">
                 <div class="panel-heading">Select Files to Send to Queue JMS
-                <button class="btn btn-danger" type="button" onclick="saveForm()">Send</button>
+                    <button class="btn btn-danger" type="button" onclick="saveForm()">Send</button>
                 </div>
                 <div id="jstree_demo_div" style="overflow:auto">
                     <ul style="height: 600px" id="generatedList" ></ul>
@@ -180,20 +238,20 @@ $('#jstree_demo_div2').on('changed.jstree', function(e, data) {
         <br>
         <script type="text/javascript">
             $(document).ready(function() {
-                var fields = ["host", "port",  "user", "password", "queueName"];
+                var fields = ["host", "port", "user", "password", "queueName"];
                 var defFields = ["defHost", "defPort", "defUser", "defPass", "defQueueName"];
                 var cookies = ["PaternizerJMSHost", "PaternizerJMSPort", "PaternizerJMSUser", "PaternizerJMSPass", "PaternizerJMSQueueName"];
-                
-                for (var a = 0 ; a < fields.length ; a++){
-                    $("#"+fields[a]).empty();
-                var host = document.getElementById(defFields[a]).value;
-                if (host !== "") {
-                    document.getElementById(fields[a]).value = host;
-                } else {
-                    setCookie(cookies[a], fields[a]);
+
+                for (var a = 0; a < fields.length; a++) {
+                    $("#" + fields[a]).empty();
+                    var host = document.getElementById(defFields[a]).value;
+                    if (host !== "") {
+                        document.getElementById(fields[a]).value = host;
+                    } else {
+                        setCookie(cookies[a], fields[a]);
+                    }
                 }
-                }
-                   
+
             });
 
         </script>
@@ -229,7 +287,7 @@ $('#jstree_demo_div2').on('changed.jstree', function(e, data) {
                 param += "&user=" + $('#user').val();
                 param += "&password=" + $('#password').val();
                 param += "&queueName=" + $('#queueName').val();
-                
+
                 console.log(param);
                 loadJSON('PublishOnQJMS', param,
                         function(data) {

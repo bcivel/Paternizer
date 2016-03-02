@@ -5,19 +5,33 @@
  */
 package com.paternizer.servlet;
 
+import com.paternizer.service.email.SendHttpMail;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.activation.DataSource;
+import javax.imageio.ImageIO;
+import javax.mail.util.ByteArrayDataSource;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.mina.util.Base64;
 
 /**
  *
  * @author bcivel
  */
-public class DeleteFile extends HttpServlet {
+public class SendMail extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -31,19 +45,36 @@ public class DeleteFile extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        String fileToDelete = request.getParameter("filePath");
+        PrintWriter pw = response.getWriter();
+        String result = null;
+        ByteArrayOutputStream out = null;
         try {
-            File file = new File(fileToDelete);
-            if (!file.isDirectory()) {
-                if (file.delete()) {
-                    System.out.println(file.getName() + " is deleted!");
-                } else {
-                    System.out.println("Error deleting the file " + file.getName());
-                }
+
+            String host = request.getParameter("host");
+            String port = request.getParameter("port");
+            String body = request.getParameter("body");
+            String subject = request.getParameter("subject");
+            String from = request.getParameter("from");
+            String to = request.getParameter("to");
+            String pictureUrl = request.getParameter("pictureUrl");
+            String picturePath = request.getParameter("picturePath");
+
+            if (host == null || port == null || body == null || subject == null || from == null || to == null) {
+                pw.println("This servlet is used to call WebService\n");
+                pw.println("Parameters needed :\n");
+                pw.println("host: The host of the mail provider service");
+                pw.println("port: The port");
+                pw.println("body: The body of the email");
             }
+            
+
+            SendHttpMail shm = new SendHttpMail();
+            shm.sendHtmlMail(host, Integer.valueOf(port), body, subject, from, to, pictureUrl, picturePath);
+
+        } catch (Exception ex) {
+            Logger.getLogger(SendMail.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            out.close();
+            //out.close();
         }
     }
 
