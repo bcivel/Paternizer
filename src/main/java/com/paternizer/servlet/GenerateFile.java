@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.paternizer.servlet;
 
 import com.paternizer.constants.FileConstants;
@@ -19,6 +18,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import sun.nio.cs.StandardCharsets;
 
 /**
  *
@@ -75,10 +75,14 @@ public class GenerateFile extends HttpServlet {
                     fileOutputStream.write(template.getBytes());
                     fileOutputStream.close();
 
-                    if (request.getParameter("fromGui")==null){
-                    out.println(FileConstants.DOCUMENT_URL + "temp" + FileConstants.FOLDER_SEPARATOR + request.getParameter("fileName"));
+                    if (request.getParameter("fromGui") == null) {
+                        if (request.getParameter("printMessage") == null) {
+                            out.println(FileConstants.DOCUMENT_URL + "temp" + FileConstants.FOLDER_SEPARATOR + request.getParameter("fileName"));
+                        } else {
+                            out.println("<xmp id=\"response\">"+new String(template.getBytes(), "UTF-8")+"</xmp>");
+                        }
                     } else {
-                    response.sendRedirect("./uploadOnFtp.jsp?fileURL="+FileConstants.DOCUMENT_URL + "temp" + FileConstants.FOLDER_SEPARATOR + request.getParameter("fileName"));
+                        response.sendRedirect("./uploadOnFtp.jsp?fileURL=" + FileConstants.DOCUMENT_URL + "temp" + FileConstants.FOLDER_SEPARATOR + request.getParameter("fileName"));
                     }
                 } else {
                     out.println(template);
