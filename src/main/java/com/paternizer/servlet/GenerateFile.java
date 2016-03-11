@@ -62,6 +62,10 @@ public class GenerateFile extends HttpServlet {
 
                     template = template.replaceAll("#" + parameter + "#", values[0]);
                 }
+                
+                if (request.getParameter("escapeDoubleQuote")!=null){
+                    template = template.replaceAll("\"", "\\\"");
+                    }
 
                 // if no file name just display file instead of create in in PaternizerDocuments
                 if (request.getParameter("fileName") != null && !"".equals(request.getParameter("fileName").trim())) {
@@ -80,6 +84,8 @@ public class GenerateFile extends HttpServlet {
                     } else {
                     response.sendRedirect("./uploadOnFtp.jsp?fileURL="+FileConstants.DOCUMENT_URL + "temp" + FileConstants.FOLDER_SEPARATOR + request.getParameter("fileName"));
                     }
+                    
+                    
                 } else {
                     out.println(template);
                 }
