@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.paternizer.servlet;
 
 import com.paternizer.constants.FileConstants;
@@ -62,10 +61,10 @@ public class GenerateFile extends HttpServlet {
 
                     template = template.replaceAll("#" + parameter + "#", values[0]);
                 }
-                
-                if (request.getParameter("escapeDoubleQuote")!=null){
+
+                if (request.getParameter("escapeDoubleQuote") != null) {
                     template = template.replaceAll("\"", "\\\"");
-                    }
+                }
 
                 // if no file name just display file instead of create in in PaternizerDocuments
                 if (request.getParameter("fileName") != null && !"".equals(request.getParameter("fileName").trim())) {
@@ -73,19 +72,26 @@ public class GenerateFile extends HttpServlet {
                     File file = new File(FileConstants.DOCUMENT_FOLDER + "temp" + FileConstants.FOLDER_SEPARATOR + request.getParameter("fileName"));
 //                    if (!file.exists()) {
 //                            file.mkdirs();
-//                        }
-
+//                   
+                    try {
+                        file.createNewFile();
+                    } catch (Exception ex) {
+                        out.println(ex.toString());
+                    }
                     FileOutputStream fileOutputStream = new FileOutputStream(file);
                     fileOutputStream.write(template.getBytes());
                     fileOutputStream.close();
 
-                    if (request.getParameter("fromGui")==null){
-                    out.println(FileConstants.DOCUMENT_URL + "temp" + FileConstants.FOLDER_SEPARATOR + request.getParameter("fileName"));
+                    if (request.getParameter("fromGui") == null) {
+                        if (request.getParameter("printMessage") == null) {
+                            out.println(FileConstants.DOCUMENT_URL + "temp" + FileConstants.FOLDER_SEPARATOR + request.getParameter("fileName"));
+                        } else {
+                            out.println("<xmp id=\"response\">" + new String(template.getBytes(), "UTF-8") + "</xmp>");
+                        }
                     } else {
-                    response.sendRedirect("./uploadOnFtp.jsp?fileURL="+FileConstants.DOCUMENT_URL + "temp" + FileConstants.FOLDER_SEPARATOR + request.getParameter("fileName"));
+                        response.sendRedirect("./uploadOnFtp.jsp?fileURL=" + FileConstants.DOCUMENT_URL + "temp" + FileConstants.FOLDER_SEPARATOR + request.getParameter("fileName"));
                     }
-                    
-                    
+
                 } else {
                     out.println(template);
                 }
