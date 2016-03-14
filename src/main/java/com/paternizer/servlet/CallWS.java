@@ -97,7 +97,7 @@ public class CallWS extends HttpServlet {
                 soapResponse.writeTo(out);
                 result = out.toString();
 
-                pw.print(result);
+                pw.print("<xmp id=\"result\">" + result + "</xmp>");
 
                 //Log out
                 Logger.getLogger(FileInject.class.getName()).log(Level.INFO, null, "CALL_RESPONSE : " + result);
