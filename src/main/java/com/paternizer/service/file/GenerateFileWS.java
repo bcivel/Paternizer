@@ -68,7 +68,7 @@ public class GenerateFileWS {
 //                    if (!file.exists()) {
 //                            file.mkdirs();
 //                        }
-
+                    file.createNewFile();
                     FileOutputStream fileOutputStream = new FileOutputStream(file);
                     fileOutputStream.write(template.getBytes());
                     fileOutputStream.close();
