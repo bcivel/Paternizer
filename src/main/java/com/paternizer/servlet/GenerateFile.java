@@ -64,7 +64,7 @@ public class GenerateFile extends HttpServlet {
                 }
 
                 if (request.getParameter("escapeDoubleQuote") != null) {
-                    template = template.replaceAll("\"", "\\\"");
+                    template = template.replace("\"", "\\\"");
                 }
 
                 // if no file name just display file instead of create in in PaternizerDocuments
